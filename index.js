@@ -20,15 +20,15 @@ const Link = mongoose.model('Link', {
 const app = express();
 app.use(express.json());
 
-// app.get('/', async (req, res) => {
-//     res.send('Well done!');
-//     await Link.create({ name: 'asd2', url: 'http://google.com', hitCount: 0 });
-//     const exists = await Link.exists({ name: 'asd' });
-//     const link = await Link.findOne({ name: 'asd' });
-//     link.name = 'asd2'
-//     link.save();
-//     console.log(link);
-// });
+app.get('/', async (req, res) => {
+    res.send('Well done!');
+    // await Link.create({ name: 'asd2', url: 'http://google.com', hitCount: 0 });
+    // const exists = await Link.exists({ name: 'asd' });
+    // const link = await Link.findOne({ name: 'asd' });
+    // link.name = 'asd2'
+    // link.save();
+    // console.log(link);
+});
 
 app.post('/url', async (req, res) => {
     if (await Link.exists({ name: req.body.name })) {
@@ -53,6 +53,6 @@ app.get('/:name', async (req, res) => {
     res.end();
 });
 
-app.listen(3000, () => {
+app.listen(8080, () => {
     console.log('The application is listening on port 3000!');
 });
