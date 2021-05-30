@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 dotenv.config();
 
-const { DB_USER, DB_NAME, DB_PASSWORD } = process.env;
+const { DB_USER, DB_NAME, DB_PASSWORD, PORT } = process.env;
 
 mongoose.connect(
     `mongodb+srv://${DB_USER}:${encodeURIComponent(
@@ -53,6 +53,6 @@ app.get('/:name', async (req, res) => {
     res.end();
 });
 
-app.listen(8080, () => {
+app.listen(PORT || 8080, () => {
     console.log('The application is listening on port 3000!');
 });
