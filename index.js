@@ -45,7 +45,7 @@ app.post('/url', async (req, res) => {
 app.get('/:name', async (req, res) => {
     const link = await Link.findOne({ name: req.params.name });
     if (!link) {
-        req.status(404);
+        res.status(404);
         res.end();
     }
     await link.update({ hitCount: ++link.hitCount });
