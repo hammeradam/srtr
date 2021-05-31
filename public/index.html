@@ -10,6 +10,7 @@
 <body>
     <main>
         <input type="url" name="url" placeholder="url">
+        <span class="url-error error-text d-none">URL is required!</span>
         <input type="text" name="name" placeholder="name">
         <button type="submit" class="btn">Shorten</button>
 
@@ -39,11 +40,17 @@
         const success = document.querySelector('.success');
         const copy = document.querySelector('.copy');
         const copied = document.querySelector('.copied');
+        const urlError = document.querySelector('.url-error');
 
         button.addEventListener('click', async (event) => {
-            console.log('hello');
             error.classList.add('d-none');
             success.classList.add('d-none');
+            urlError.classList.add('d-none');
+
+            if (!urlInput.value) {
+                urlError.classList.remove('d-none');
+                return;
+            }
 
             const response = await fetch('/api/url', {
                 method: 'POST',

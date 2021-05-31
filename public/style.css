@@ -85,3 +85,11 @@ button:hover, button:focus {
     gap: 5px;
     align-items: flex-end;
 }
+
+.error-text {
+    color: red;
+    opacity: .6;
+    font-size: 14px;
+    align-self: flex-start;
+    margin-top: -15px;
+}

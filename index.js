@@ -54,7 +54,7 @@ app.get('/:name', async (req, res) => {
     const link = await Link.findOne({ name: req.params.name });
     if (!link) {
         res.status(404);
-        res.end();
+        res.sendFile(path.join(__dirname+'/404.html'))
     }
     await link.update({ hitCount: ++link.hitCount });
     res.redirect(link.url);
