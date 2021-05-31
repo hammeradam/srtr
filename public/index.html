@@ -72,10 +72,19 @@
 
 
         success.addEventListener('click', () => {
-            navigator.clipboard.writeText(success.getAttribute('data-url'));
+            copyToClipboard(success.getAttribute('data-url'))
             copy.classList.add('d-none');
             copied.classList.remove('d-none');
-        })
+        });
+
+        const copyToClipboard = (str) => {
+            const el = document.createElement('textarea');
+            el.value = str;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        };
     </script>
 </body>
 </html>
