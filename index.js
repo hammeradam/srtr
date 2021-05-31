@@ -1,9 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv'
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 dotenv.config();
 
 const { DB_USER, DB_NAME, DB_PASSWORD, PORT } = process.env;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 mongoose.connect(
     `mongodb+srv://${DB_USER}:${encodeURIComponent(
@@ -14,33 +17,38 @@ mongoose.connect(
 const Link = mongoose.model('Link', {
     url: String,
     name: String,
-    hitCount: Number
+    hitCount: Number,
 });
 
 const app = express();
 app.use(express.json());
+app.use(express.static('public'));
 
-app.get('/', async (req, res) => {
-    res.send('Well done!');
-    // await Link.create({ name: 'asd2', url: 'http://google.com', hitCount: 0 });
-    // const exists = await Link.exists({ name: 'asd' });
-    // const link = await Link.findOne({ name: 'asd' });
-    // link.name = 'asd2'
-    // link.save();
-    // console.log(link);
-});
+app.get('/links', (req, res) => {
+    res.sendFile(path.join(__dirname+'/links.html'))
+})
 
-app.post('/url', async (req, res) => {
+app.post('/api/url', async (req, res) => {
     if (await Link.exists({ name: req.body.name })) {
         res.status(400);
         res.json({
-            error: 'name already taken'
+            error: 'name already taken',
         });
     }
 
     await Link.create({ name: req.body.name, url: req.body.url, hitCount: 0 });
     res.end();
 });
+
+app.get('/api/url', async (req, res) =>
+    res.json(
+        (await Link.find()).map((link) => ({
+            url: link.url,
+            name: link.name,
+            hitCount: link.hitCount,
+        }))
+    )
+);
 
 app.get('/:name', async (req, res) => {
     const link = await Link.findOne({ name: req.params.name });
@@ -53,6 +61,6 @@ app.get('/:name', async (req, res) => {
     res.end();
 });
 
-app.listen(PORT || 8080, () => {
+app.listen(PORT || 3000, () => {
     console.log('The application is listening on port 3000!');
 });

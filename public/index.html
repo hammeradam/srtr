@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>srtr</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <input type="url" name="url" placeholder="url">
+        <input type="text" name="name" placeholder="name">
+        <button type="submit" class="btn">Shorten</button>
+
+        <div class="error d-none">
+            Name is already taken.<br>Pick another one and try again!
+        </div>
+
+        <div class="success d-none">
+            Link created!<br>
+            
+            <span>Click here to copy it!
+                <svg xmlns="http://www.w3.org/2000/svg" class="copy" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="copied" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+        </span>
+        </div>
+    </main>
+
+    <script>
+        const button = document.querySelector('button');
+        const urlInput = document.querySelector('input[name="url"]');
+        const nameInput = document.querySelector('input[name="name"]');
+        const error = document.querySelector('.error');
+        const success = document.querySelector('.success');
+        const copy = document.querySelector('.copy');
+        const copied = document.querySelector('.copied');
+
+        button.addEventListener('click', async (event) => {
+            console.log('hello');
+            error.classList.add('d-none');
+            success.classList.add('d-none');
+
+            const response = await fetch('/api/url', {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: urlInput.value,
+                    name: nameInput.value,
+                })
+            });
+
+            if (!response.ok) {
+                error.classList.remove('d-none');
+                return;
+            }
+
+            success.classList.remove('d-none');
+            copy.classList.remove('d-none');
+            copied.classList.add('d-none');
+            success.setAttribute('data-url', new URL(nameInput.value, window.location.origin));
+        });
+
+
+        success.addEventListener('click', () => {
+            navigator.clipboard.writeText(success.getAttribute('data-url'));
+            copy.classList.add('d-none');
+            copied.classList.remove('d-none');
+        })
+    </script>
+</body>
+</html>
