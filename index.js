@@ -24,6 +24,7 @@ const Link = mongoose.model('Link', {
     name: String,
     password: String,
     hitCount: Number,
+    limit: Number,
 });
 
 const generareName = async (length = 2) => {
@@ -87,11 +88,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use(session({
-    secret: 'naslfnkadfkamfkamf',
-    resave: false,
-    saveUninitialized: true,
-}));
+app.use(
+    session({
+        secret: 'naslfnkadfkamfkamf',
+        resave: false,
+        saveUninitialized: true,
+    })
+);
 
 app.get('/links', (_req, res) => {
     res.sendFile(path.join(__dirname + '/links.html'));
@@ -105,13 +108,13 @@ app.post('/api/url', async (req, res) => {
     let password = null;
 
     if (req.body.password.length) {
-        password = await hash(req.body.password, (await genSalt(10)));
+        password = await hash(req.body.password, await genSalt(10));
     }
 
-    await Link.create({ name, url: req.body.url, hitCount: 0, password });
+    await Link.create({ name, url: req.body.url, hitCount: 0, password, limit: req.body.limit });
     res.json({
         name,
-        url: req.body.url
+        url: req.body.url,
     });
 });
 
@@ -163,6 +166,12 @@ app.get('/api/url/:name', async (req, res) => {
 app.get('/:name', async (req, res) => {
     const link = await Link.findOne({ name: req.params.name });
     if (!link) {
+        res.status(404);
+        res.sendFile(path.join(__dirname + '/pages/404.html'));
+        return;
+    }
+
+    if (link.limit && link.limit <= link.hitCount) {
         res.status(404);
         res.sendFile(path.join(__dirname + '/pages/404.html'));
         return;

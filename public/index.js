@@ -17,6 +17,7 @@ const checkNameError = document.querySelector('.check-container .name-error');
 const navItems = document.querySelectorAll('nav ul li');
 const containers = document.querySelectorAll('main > *');
 const passwordInput = document.querySelector('.create-container input[name="password"]');
+const limitInput = document.querySelector('.create-container input[name="limit"]');
 
 const errors = {
     name_taken: 'Name is already taken!',
@@ -86,7 +87,8 @@ createButton.addEventListener('click', async () => {
         body: JSON.stringify({
             url: urlInput.value,
             name: nameInput.value,
-            password: passwordInput.value
+            password: passwordInput.value,
+            limit: limitInput.value
         }),
     });
 

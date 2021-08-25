@@ -145,6 +145,12 @@ details {
     width: 100%;
 }
 
+details div {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
 summary {
-    padding-bottom: 10px;   
+    padding-bottom: 10px;
 }
