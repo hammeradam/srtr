@@ -62,7 +62,7 @@ main > * {
     border-radius: 0;
     border: 2px black solid;
     padding: 5px 10px;
-    transition: .3s ease;
+    transition: box-shadow .3s ease;
     font-size: 24px;
 }
 
@@ -82,7 +82,7 @@ main > * {
     font-size: 14px;
     padding: 5px;
     z-index: -1;
-    transition: .2s ease;
+    transition: transform .2s ease;
     align-self: flex-start;
     position: absolute;
     bottom: 0;
@@ -98,7 +98,7 @@ button {
     border: none;
     padding: 5px 10px;
     cursor: pointer;
-    transition: .3s ease;
+    transition: box-shadow .3s ease;
     font-size: 24px;
 }
 
@@ -138,4 +138,13 @@ button:hover, button:focus {
 
 .success svg {
     width: 20px;
+}
+
+
+details {
+    width: 100%;
+}
+
+summary {
+    padding-bottom: 10px;   
 }

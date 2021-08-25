@@ -3,8 +3,10 @@ import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
-
+import session from 'express-session';
 import dotenv from 'dotenv';
+import { hash, genSalt, compare } from 'bcrypt';
+
 dotenv.config();
 
 const { DB_USER, DB_NAME, DB_PASSWORD, PORT } = process.env;
@@ -20,6 +22,7 @@ mongoose.connect(
 const Link = mongoose.model('Link', {
     url: String,
     name: String,
+    password: String,
     hitCount: Number,
 });
 
@@ -82,7 +85,13 @@ const validate = async (req, res) => {
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(session({
+    secret: 'naslfnkadfkamfkamf',
+    resave: false,
+    saveUninitialized: true,
+}));
 
 app.get('/links', (_req, res) => {
     res.sendFile(path.join(__dirname + '/links.html'));
@@ -93,12 +102,17 @@ app.post('/api/url', async (req, res) => {
 
     const name = req.body.name || (await generareName());
 
-    await Link.create({ name, url: req.body.url, hitCount: 0 });
+    let password = null;
+
+    if (req.body.password.length) {
+        password = await hash(req.body.password, (await genSalt(10)));
+    }
+
+    await Link.create({ name, url: req.body.url, hitCount: 0, password });
     res.json({
         name,
-        url: req.body.url,
+        url: req.body.url
     });
-    res.end();
 });
 
 app.get('/api/url', async (_req, res) =>
@@ -110,6 +124,22 @@ app.get('/api/url', async (_req, res) =>
         }))
     )
 );
+
+app.post('/api/url/password', async (req, res) => {
+    if (!req.body.password.length || !req.session.name.length) {
+        res.sendFile(path.join(__dirname + '/pages/400.html'));
+        return;
+    }
+    const link = await Link.findOne({ name: req.session.name });
+    req.session.destroy();
+
+    if (!(await compare(req.body.password, link.password))) {
+        res.sendFile(path.join(__dirname + '/pages/400.html'));
+        return;
+    }
+
+    res.redirect(link.url);
+});
 
 app.get('/api/url/:name', async (req, res) => {
     if (!req.params.name) {
@@ -128,18 +158,25 @@ app.get('/api/url/:name', async (req, res) => {
     }
 
     res.json({ link });
-    res.end();
 });
 
 app.get('/:name', async (req, res) => {
     const link = await Link.findOne({ name: req.params.name });
     if (!link) {
         res.status(404);
-        res.sendFile(path.join(__dirname + '/404.html'));
+        res.sendFile(path.join(__dirname + '/pages/404.html'));
+        return;
     }
-    await link.update({ hitCount: ++link.hitCount });
+
+    await link.updateOne({ hitCount: ++link.hitCount });
+
+    if (link.password) {
+        req.session.name = link.name;
+        res.sendFile(path.join(__dirname + '/pages/password.html'));
+        return;
+    }
+
     res.redirect(link.url);
-    res.end();
 });
 
 app.listen(PORT || 3000, () => {

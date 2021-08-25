@@ -16,6 +16,7 @@ const createNameError = document.querySelector('.create-container .name-error');
 const checkNameError = document.querySelector('.check-container .name-error');
 const navItems = document.querySelectorAll('nav ul li');
 const containers = document.querySelectorAll('main > *');
+const passwordInput = document.querySelector('.create-container input[name="password"]');
 
 const errors = {
     name_taken: 'Name is already taken!',
@@ -53,6 +54,7 @@ urlInput.addEventListener('input', () => urlError.classList.remove('show'));
 nameInput.addEventListener('input', () => nameError.classList.remove('show'));
 
 createButton.addEventListener('click', async () => {
+    console.log('create');
     createErrorMessage.classList.add('d-none');
     createSuccess.classList.add('d-none');
     urlError.classList.remove('show');
@@ -84,6 +86,7 @@ createButton.addEventListener('click', async () => {
         body: JSON.stringify({
             url: urlInput.value,
             name: nameInput.value,
+            password: passwordInput.value
         }),
     });
 
