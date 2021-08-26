@@ -37,10 +37,6 @@ nav ul li.active  {
     border-bottom: 2px solid blueviolet;
 }
 
-main {
-    min-width: 30vw;
-}
-
 main > * {
     display: flex;
     justify-content: center;
