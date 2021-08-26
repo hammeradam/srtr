@@ -54,8 +54,9 @@ urlInput.addEventListener('input', () => urlError.classList.remove('show'));
 
 nameInput.addEventListener('input', () => nameError.classList.remove('show'));
 
-createButton.addEventListener('click', async () => {
-    console.log('create');
+createButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+
     createErrorMessage.classList.add('d-none');
     createSuccess.classList.add('d-none');
     urlError.classList.remove('show');

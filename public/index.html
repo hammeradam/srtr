@@ -20,28 +20,35 @@
             </ul>
         </nav>
         <main>
-            <div class="create-container">
+            <form class="create-container" autocomplete="off">
+                <h1>shortr</h1>
                 <div class="form-group">
-                    <input type="url" name="url" placeholder="url" />
+                    <label for="create-url">url</label>
+                    <input id="create-url" type="url" name="url" autocomplete="off" />
                     <span class="url-error error-text" />
                 </div>
                 <div class="form-group">
-                    <input type="text" name="name" placeholder="name" />
+                    <label for="create-name">name</label>
+                    <input id="create-name" type="text" name="name" autocomplete="off" />
                     <span class="name-error error-text" />
                 </div>
                 <details>
                     <summary>settings</summary>
                     <div>
                         <div class="form-group">
+                            <label for="create-password">password</label>
                             <input
+                                id="create-password"
                                 type="password"
                                 name="password"
-                                placeholder="password"
+                                autocomplete="off"
+                                placeholder="&nbsp;"
                             />
                             <span class="password-error error-text" />
                         </div>
                         <div class="form-group">
-                            <input type="number" name="limit" placeholder="usage limit" />
+                            <label for="create-limit">usage limit</label>
+                            <input id="create-limit" type="number" name="limit" />
                             <span class="limit-error error-text" />
                         </div>
                     </div>
@@ -82,7 +89,7 @@
                         </svg>
                     </span>
                 </div>
-            </div>
+            </form>
             <div class="check-container d-none">
                 <div class="form-group">
                     <input type="text" name="name" placeholder="name" />

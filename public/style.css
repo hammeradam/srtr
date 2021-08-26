@@ -37,12 +37,16 @@ nav ul li.active  {
     border-bottom: 2px solid blueviolet;
 }
 
+main {
+    min-width: 30vw;
+}
+
 main > * {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.4rem;
     border: 3px black solid;
     padding: 2rem;    
     box-shadow: 5px 5px 0px 0px blueviolet;
@@ -74,6 +78,15 @@ main > * {
 .form-group input::placeholder {
     color: blueviolet;
     opacity: .6;
+}
+
+.form-group label {
+    color: blueviolet;
+    margin-bottom: 3px;
+}
+
+input:-webkit-autofill {
+    background-color: transparent !important;
 }
 
 .form-group .error-text {
@@ -145,12 +158,13 @@ details {
     width: 100%;
 }
 
-details div {
+details > div {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.4rem;
 }
 
 summary {
     padding-bottom: 10px;
+    cursor: pointer;
 }

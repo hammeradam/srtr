@@ -53,7 +53,7 @@ const validateName = (string) => /^[A-z0-9-._]+$/.test(string);
 const validate = async (req, res) => {
     if (!req.body.url) {
         res.status(400);
-        res.json({
+        return res.json({
             error: 'url_required',
             field: 'url',
         });
@@ -61,7 +61,7 @@ const validate = async (req, res) => {
 
     if (!validateUrl(req.body.url)) {
         res.status(400);
-        res.json({
+        return res.json({
             error: 'url_invalid',
             field: 'url',
         });
@@ -69,7 +69,7 @@ const validate = async (req, res) => {
 
     if (req.body.name && (await Link.exists({ name: req.body.name }))) {
         res.status(400);
-        res.json({
+        return res.json({
             error: 'name_taken',
             field: 'name',
         });
@@ -77,7 +77,7 @@ const validate = async (req, res) => {
 
     if (req.body.name && !validateName(req.body.name)) {
         res.status(400);
-        res.json({
+        return res.json({
             error: 'name_invalid',
             field: 'name',
         });
@@ -130,15 +130,13 @@ app.get('/api/url', async (_req, res) =>
 
 app.post('/api/url/password', async (req, res) => {
     if (!req.body.password.length || !req.session.name.length) {
-        res.sendFile(path.join(__dirname + '/pages/400.html'));
-        return;
+        return res.sendFile(path.join(__dirname + '/pages/400.html'));
     }
     const link = await Link.findOne({ name: req.session.name });
     req.session.destroy();
 
     if (!(await compare(req.body.password, link.password))) {
-        res.sendFile(path.join(__dirname + '/pages/400.html'));
-        return;
+        return res.sendFile(path.join(__dirname + '/pages/400.html'));
     }
 
     res.redirect(link.url);
@@ -167,22 +165,19 @@ app.get('/:name', async (req, res) => {
     const link = await Link.findOne({ name: req.params.name });
     if (!link) {
         res.status(404);
-        res.sendFile(path.join(__dirname + '/pages/404.html'));
-        return;
+        return res.sendFile(path.join(__dirname + '/pages/404.html'));
     }
 
     if (link.limit && link.limit <= link.hitCount) {
         res.status(404);
-        res.sendFile(path.join(__dirname + '/pages/404.html'));
-        return;
+        return res.sendFile(path.join(__dirname + '/pages/404.html'));
     }
 
     await link.updateOne({ hitCount: ++link.hitCount });
 
     if (link.password) {
         req.session.name = link.name;
-        res.sendFile(path.join(__dirname + '/pages/password.html'));
-        return;
+        return res.sendFile(path.join(__dirname + '/pages/password.html'));
     }
 
     res.redirect(link.url);
