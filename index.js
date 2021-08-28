@@ -82,6 +82,8 @@ const validate = async (req, res) => {
             field: 'name',
         });
     }
+
+    return true;
 };
 
 const app = express();
@@ -101,21 +103,29 @@ app.get('/links', (_req, res) => {
 });
 
 app.post('/api/url', async (req, res) => {
-    await validate(req, res);
+    const isValid = await validate(req, res);
 
-    const name = req.body.name || (await generareName());
+    if (isValid === true) {
+        const name = req.body.name || (await generareName());
 
-    let password = null;
+        let password = null;
+        console.log(req.body);
+        if (req.body.password && req.body.password.length) {
+            password = await hash(req.body.password, await genSalt(10));
+        }
 
-    if (req.body.password.length) {
-        password = await hash(req.body.password, await genSalt(10));
+        await Link.create({
+            name,
+            url: req.body.url,
+            hitCount: 0,
+            password,
+            limit: req.body.limit,
+        });
+        res.json({
+            name,
+            url: req.body.url,
+        });
     }
-
-    await Link.create({ name, url: req.body.url, hitCount: 0, password, limit: req.body.limit });
-    res.json({
-        name,
-        url: req.body.url,
-    });
 });
 
 app.get('/api/url', async (_req, res) =>
