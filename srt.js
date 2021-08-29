@@ -12,7 +12,8 @@ const getArgument = (longName, shortName) => {
 const data = JSON.stringify({
     url: process.argv[2],
     name: getArgument('name'),
-    password: getArgument('password')
+    password: getArgument('password'),
+    limit: getArgument('limit')
 });
 
 const PROTOCOL = 'https://'
@@ -39,7 +40,7 @@ const req = request(options, (response) => {
     response.on('end', () => {
         if (status === 200) {
             const data = JSON.parse(result);
-            const url = `${HOSTNAME}${data.name}`;
+            const url = `${PROTOCOL}${HOSTNAME}/${data.name}`;
             pbcopy(url);
             console.log(`URL copied to clipboard: ${PROTOCOL}${HOSTNAME}/${data.name}`);
 
