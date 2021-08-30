@@ -167,3 +167,13 @@ summary {
     padding-bottom: 10px;
     cursor: pointer;
 }
+
+.auth-links {
+    display: flex;
+    gap: 20px;
+    margin-left: auto;
+}
+
+.auth-links > [data-container="logout"] {
+    display: none;
+}

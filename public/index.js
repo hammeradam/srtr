@@ -2,8 +2,12 @@ const createButton = document.querySelector('.create-container button');
 const checkButton = document.querySelector('.check-container button');
 const button = document.querySelector('.create-container button');
 const urlInput = document.querySelector('input[name="url"]');
-const nameInput = document.querySelector('.create-container input[name="name"]');
-const checkNameInput = document.querySelector('.check-container input[name="name"]');
+const nameInput = document.querySelector(
+    '.create-container input[name="name"]'
+);
+const checkNameInput = document.querySelector(
+    '.check-container input[name="name"]'
+);
 const createErrorMessage = document.querySelector('.create-container .error');
 const checkErrorMessage = document.querySelector('.check-container .error');
 const createSuccess = document.querySelector('.create-container .success');
@@ -14,18 +18,27 @@ const urlError = document.querySelector('.url-error');
 const nameError = document.querySelector('.name-error');
 const createNameError = document.querySelector('.create-container .name-error');
 const checkNameError = document.querySelector('.check-container .name-error');
-const navItems = document.querySelectorAll('nav ul li');
+const navItems = document.querySelectorAll('nav ul li[data-container]');
 const containers = document.querySelectorAll('main > *');
-const passwordInput = document.querySelector('.create-container input[name="password"]');
-const limitInput = document.querySelector('.create-container input[name="limit"]');
+const passwordInput = document.querySelector(
+    '.create-container input[name="password"]'
+);
+const limitInput = document.querySelector(
+    '.create-container input[name="limit"]'
+);
+const loginLink = document.querySelector('[data-container="login"]');
+const registerLink = document.querySelector('[data-container="register"]');
+const logoutLink = document.querySelector('.logout-link');
 
 const errors = {
     name_taken: 'Name is already taken!',
     name_invalid: 'Invalid name! (A-z0-9-_.)',
     url_invalid: 'Invalid URL!',
     url_required: 'URL is required!',
-    unknown: 'Something bad happened. Please try again later!'
+    unknown: 'Something bad happened. Please try again later!',
 };
+
+let accessToken = '';
 
 const copyToClipboard = (string) => {
     const element = document.createElement('textarea');
@@ -38,15 +51,15 @@ const copyToClipboard = (string) => {
 
 const validateUrl = (string) => {
     let url;
-  
+
     try {
-      url = new URL(string);
+        url = new URL(string);
     } catch {
-      return false;  
+        return false;
     }
-  
-    return url.protocol === "http:" || url.protocol === "https:";
-}
+
+    return url.protocol === 'http:' || url.protocol === 'https:';
+};
 
 const validateName = (string) => /^[A-z0-9-._]+$/.test(string);
 
@@ -54,9 +67,20 @@ urlInput.addEventListener('input', () => urlError.classList.remove('show'));
 
 nameInput.addEventListener('input', () => nameError.classList.remove('show'));
 
+logoutLink.addEventListener('click', async () => {
+    await sendRequest('/api/auth/logout', {
+        method: 'POST'
+    });
+
+    loginLink.style.display = 'block';
+    registerLink.style.display = 'block';
+    logoutLink.style.display = 'none';
+    accessToken = '';
+});
+
 createButton.addEventListener('click', async (event) => {
     event.preventDefault();
-
+    console.log('create');
     createErrorMessage.classList.add('d-none');
     createSuccess.classList.add('d-none');
     urlError.classList.remove('show');
@@ -80,7 +104,7 @@ createButton.addEventListener('click', async (event) => {
         return;
     }
 
-    const response = await fetch('/api/url', {
+    const response = await sendRequest('/api/url', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -89,7 +113,7 @@ createButton.addEventListener('click', async (event) => {
             url: urlInput.value,
             name: nameInput.value,
             password: passwordInput.value,
-            limit: limitInput.value
+            limit: limitInput.value,
         }),
     });
 
@@ -123,7 +147,10 @@ createButton.addEventListener('click', async (event) => {
     createSuccess.classList.remove('d-none');
     copy.classList.remove('d-none');
     copied.classList.add('d-none');
-    createSuccess.setAttribute('data-url', new URL(name, window.location.origin));
+    createSuccess.setAttribute(
+        'data-url',
+        new URL(name, window.location.origin)
+    );
 });
 
 checkButton.addEventListener('click', async () => {
@@ -137,7 +164,7 @@ checkButton.addEventListener('click', async () => {
         return;
     }
 
-    const response = await fetch(`/api/url/${checkNameInput.value}`);
+    const response = await sendRequest(`/api/url/${checkNameInput.value}`);
 
     if (!response.ok) {
         if (response.status === 404) {
@@ -175,7 +202,45 @@ navItems.forEach((item) => {
             item.classList.remove('active');
         });
 
-        document.querySelector(`.${item.getAttribute('data-container')}-container`).classList.remove('d-none');
+        document
+            .querySelector(`.${item.getAttribute('data-container')}-container`)
+            .classList.remove('d-none');
         item.classList.add('active');
-    })
+    });
 });
+
+window.addEventListener('DOMContentLoaded', async () => {
+    const request = await sendRequest('/api/auth/refresh_token', { method: 'POST' });
+
+    if (request.ok) {
+        const response = await request.json();
+        accessToken = response.accessToken;
+        loginLink.style.display = 'none';
+        registerLink.style.display = 'none';
+        logoutLink.style.display = 'block';
+    } else {
+        loginLink.style.display = 'block';
+        registerLink.style.display = 'block';
+        logoutLink.style.display = 'none';
+        accessToken = '';
+    }
+
+    const linksRequest = await sendRequest('/api/url/own');
+
+    if (linksRequest.ok) {
+        const linksResponse = await linksRequest.json();
+        
+        console.log(linksResponse)
+    }
+});
+
+const sendRequest = (path, options) => {
+    return fetch(path, {
+        credentials: 'include',
+        ...options,
+        headers: {
+            ...options?.headers,
+            authorization: 'Bearer: ' + accessToken,
+        },
+    })
+}

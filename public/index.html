@@ -17,6 +17,11 @@
             <ul>
                 <li data-container="create" class="active">HOME</li>
                 <li data-container="check">CHECK</li>
+                <div class="auth-links">
+                    <li data-container="login">LOGIN</li>
+                    <li data-container="register">REGISTER</li>
+                    <li class="logout-link">LOGOUT</li>
+                </div>
             </ul>
         </nav>
         <main>
@@ -24,12 +29,22 @@
                 <h1>shrtr</h1>
                 <div class="form-group">
                     <label for="create-url">url</label>
-                    <input id="create-url" type="url" name="url" autocomplete="off" />
+                    <input
+                        id="create-url"
+                        type="url"
+                        name="url"
+                        autocomplete="off"
+                    />
                     <span class="url-error error-text" />
                 </div>
                 <div class="form-group">
                     <label for="create-name">name</label>
-                    <input id="create-name" type="text" name="name" autocomplete="off" />
+                    <input
+                        id="create-name"
+                        type="text"
+                        name="name"
+                        autocomplete="off"
+                    />
                     <span class="name-error error-text" />
                 </div>
                 <details>
@@ -48,7 +63,11 @@
                         </div>
                         <div class="form-group">
                             <label for="create-limit">usage limit</label>
-                            <input id="create-limit" type="number" name="limit" />
+                            <input
+                                id="create-limit"
+                                type="number"
+                                name="limit"
+                            />
                             <span class="limit-error error-text" />
                         </div>
                     </div>
@@ -108,6 +127,32 @@
                     <p>hitcount: <span></span></p>
                 </div>
             </div>
+            <form id="login-form" method="POST" action="/api/auth/login" class="login-container d-none" autocomplete="off">
+                <h1>login</h1>
+                <div class="form-group">
+                    <label for="login-email">email</label>
+                    <input
+                        id="login-email"
+                        type="email"
+                        name="email"
+                        autocomplete="off"
+                    />
+                    <span class="url-error error-text" />
+                </div>
+                <div class="form-group">
+                    <label for="login-password">password</label>
+                    <input
+                        id="login-password"
+                        type="password"
+                        name="password"
+                        autocomplete="off"
+                    />
+                    <span class="name-error error-text" />
+                </div>
+                
+                <button type="submit" class="btn">login</button>
+                <div class="error d-none"></div>
+            </form>
         </main>
 
         <script src="index.js"></script>
