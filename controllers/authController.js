@@ -12,9 +12,9 @@ router.post('/register', async (req, res) => {
         return res.status(400).send('All input is required');
     }
 
-    const oldUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
-    if (oldUser) {
+    if (existingUser) {
         return res.status(409).send('User Already Exist. Please Login');
     }
 
@@ -27,10 +27,10 @@ router.post('/register', async (req, res) => {
     });
 
     const token = createAccessToken(user);
-    user.token = token;
+    // user.token = token;
     sendRefreshToken(res, createRefreshToken(user));
 
-    res.status(201).json(user);
+    res.redirect('/');
 });
 
 router.post('/login', async (req, res) => {
@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = createAccessToken(user);
-    user.token = token;
+    // user.token = token;
     sendRefreshToken(res, createRefreshToken(user));
 
     res.redirect('/');

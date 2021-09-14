@@ -71,15 +71,15 @@ router.post('/password', async (req, res) => {
     const { password } = req.body;
     const { name } = req.session;
 
-    if (!password.length || !name.length) {
-        return res.sendFile(path.join(__dirname + '/pages/400.html'));
+    if (!password?.length || !name?.length) {
+        return res.sendFile(path.join(__dirname, '../pages/400.html'));
     }
 
     const link = await Link.findOne({ name });
     req.session.destroy();
 
     if (!(await compare(password, link.password))) {
-        return res.sendFile(path.join(__dirname + '/pages/400.html'));
+        return res.sendFile(path.join(__dirname, '../pages/400.html'));
     }
 
     res.redirect(link.url);

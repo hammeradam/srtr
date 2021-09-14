@@ -69,7 +69,7 @@ nameInput.addEventListener('input', () => nameError.classList.remove('show'));
 
 logoutLink.addEventListener('click', async () => {
     await sendRequest('/api/auth/logout', {
-        method: 'POST'
+        method: 'POST',
     });
 
     loginLink.style.display = 'block';
@@ -210,7 +210,9 @@ navItems.forEach((item) => {
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
-    const request = await sendRequest('/api/auth/refresh_token', { method: 'POST' });
+    const request = await sendRequest('/api/auth/refresh_token', {
+        method: 'POST',
+    });
 
     if (request.ok) {
         const response = await request.json();
@@ -218,6 +220,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         loginLink.style.display = 'none';
         registerLink.style.display = 'none';
         logoutLink.style.display = 'block';
+
+        console.log(parseJwt(accessToken));
     } else {
         loginLink.style.display = 'block';
         registerLink.style.display = 'block';
@@ -229,8 +233,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (linksRequest.ok) {
         const linksResponse = await linksRequest.json();
-        
-        console.log(linksResponse)
+
+        console.log(linksResponse);
     }
 });
 
@@ -242,5 +246,19 @@ const sendRequest = (path, options) => {
             ...options?.headers,
             authorization: 'Bearer: ' + accessToken,
         },
-    })
-}
+    });
+};
+
+const parseJwt = (token) =>
+    JSON.parse(
+        decodeURIComponent(
+            atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
+                .split('')
+                .map(function (c) {
+                    return (
+                        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                    );
+                })
+                .join('')
+        )
+    );
