@@ -1,12 +1,11 @@
-import path from 'path';
 import express, { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-// import { fileURLToPath } from 'url';
 import { hash, compare } from 'bcrypt';
 import { Link } from '../models/link';
 import { User } from '../models/user';
 import { validateLink } from '../utils/validateLink';
 import { generateName } from '../utils/generateName';
+import { sendHtml } from '../utils/sendHtml';
 
 const router = express.Router();
 
@@ -67,17 +66,22 @@ router.get('/', async (_req, res) =>
 // PASSWORD
 router.post('/password', async (req, res) => {
     const { password } = req.body;
-    const { name } = req.session;
+    // @ts-ignore
+    const name = req.session.name!;
 
     if (!password?.length || !name?.length) {
-        return res.sendFile(path.join(__dirname, '../pages/400.html'));
+        return sendHtml(res, '400', 400);
     }
 
     const link = await Link.findOne({ name });
+    if (!link) {
+        return sendHtml(res, '404', 404);
+    }
+
     req.session.destroy(() => {});
 
     if (!(await compare(password, link.password))) {
-        return res.sendFile(path.join(__dirname, '../pages/400.html'));
+        return sendHtml(res, '400', 400);
     }
 
     res.redirect(link.url);
@@ -100,7 +104,7 @@ router.get('/:name', async (req, res) => {
 
     if (!name) {
         res.status(400);
-        res.json({
+        return res.json({
             error: 'name_required',
             field: 'name',
         });

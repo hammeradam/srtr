@@ -80,7 +80,6 @@ logoutLink.addEventListener('click', async () => {
 
 createButton.addEventListener('click', async (event) => {
     event.preventDefault();
-    console.log('create');
     createErrorMessage.classList.add('d-none');
     createSuccess.classList.add('d-none');
     urlError.classList.remove('show');
@@ -182,8 +181,6 @@ checkButton.addEventListener('click', async () => {
     checkSuccess.querySelector('span').textContent = link.hitCount;
     checkSuccess.querySelector('a').href = link.url;
     checkSuccess.querySelector('a').textContent = link.url;
-
-    console.log(response);
 });
 
 createSuccess.addEventListener('click', () => {
@@ -194,6 +191,19 @@ createSuccess.addEventListener('click', () => {
 
 navItems.forEach((item) => {
     item.addEventListener('click', () => {
+        const component = item.getAttribute('data-container')
+        showComponent(component);
+
+        history.pushState(
+            {},
+            {},
+            `/${component === 'create' ? '' : component}`
+        );
+    });
+});
+
+const showComponent = (component, hideOthers = true) => {
+    if (hideOthers) {
         containers.forEach((container) => {
             container.classList.add('d-none');
         });
@@ -201,13 +211,18 @@ navItems.forEach((item) => {
         navItems.forEach((item) => {
             item.classList.remove('active');
         });
+    }
 
-        document
-            .querySelector(`.${item.getAttribute('data-container')}-container`)
-            .classList.remove('d-none');
-        item.classList.add('active');
-    });
-});
+    document
+        .querySelector(`.${component}-container`)
+        .classList.remove('d-none');
+
+    document
+        .querySelector(`[data-container="${component}"]`)
+        .classList.add('active');
+};
+
+window.addEventListener('popstate', () => showComponent(window.location.pathname.substring(1) || 'create'));
 
 window.addEventListener('DOMContentLoaded', async () => {
     const request = await sendRequest('/api/auth/refresh_token', {
@@ -221,7 +236,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         registerLink.style.display = 'none';
         logoutLink.style.display = 'block';
 
-        console.log(parseJwt(accessToken));
+        // console.log(parseJwt(accessToken));
     } else {
         loginLink.style.display = 'block';
         registerLink.style.display = 'block';
@@ -234,8 +249,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (linksRequest.ok) {
         const linksResponse = await linksRequest.json();
 
-        console.log(linksResponse);
+        // console.log(linksResponse);
     }
+
+    showComponent(window.location.pathname.substring(1) || 'create', false);
 });
 
 const sendRequest = (path, options) => {
@@ -252,7 +269,8 @@ const sendRequest = (path, options) => {
 const parseJwt = (token) =>
     JSON.parse(
         decodeURIComponent(
-            atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
+            window
+                .atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
                 .split('')
                 .map(function (c) {
                     return (
@@ -262,7 +280,6 @@ const parseJwt = (token) =>
                 .join('')
         )
     );
-
 
 const dot = document.querySelector('.dot');
 const nav = document.querySelector('nav');

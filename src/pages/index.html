@@ -15,7 +15,7 @@
     <body>
         <nav>
             <ul>
-                <li data-container="create" class="active">HOME</li>
+                <li data-container="create">HOME</li>
                 <li data-container="check">CHECK</li>
                 <div class="auth-links">
                     <li data-container="login">LOGIN</li>
@@ -25,8 +25,8 @@
             </ul>
         </nav>
         <main>
-            <form class="create-container" autocomplete="off">
-                <h1>shrtr</h1>
+            <form class="create-container d-none" autocomplete="off">
+                <h1>srtr</h1>
                 <div class="form-group">
                     <label for="create-url">url</label>
                     <input
@@ -110,6 +110,7 @@
                 </div>
             </form>
             <div class="check-container d-none">
+                <h1>check</h1>
                 <div class="form-group">
                     <input type="text" name="name" placeholder="name" />
                     <span class="name-error error-text" />

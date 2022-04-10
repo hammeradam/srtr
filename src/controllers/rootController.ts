@@ -1,19 +1,14 @@
-import path from 'path';
 import express from 'express';
 import { Link } from '../models/link';
+import { sendHtml } from '../utils/sendHtml';
 
 const router = express.Router();
 
-router.get('/:name', async (req, res) => {
+router.get('/l/:name', async (req, res) => {
     const link = await Link.findOne({ name: req.params.name });
-    if (!link) {
+    if (!link || (link.limit && link.limit <= link.hitCount)) {
         res.status(404);
-        return res.sendFile(path.join(__dirname, '../pages/404.html'));
-    }
-
-    if (link.limit && link.limit <= link.hitCount) {
-        res.status(404);
-        return res.sendFile(path.join(__dirname, '../pages/404.html'));
+        return sendHtml(res, '404', 404);
     }
 
     await link.updateOne({ hitCount: ++link.hitCount });
@@ -21,10 +16,12 @@ router.get('/:name', async (req, res) => {
     if (link.password) {
         // @ts-ignore
         req.session.name = link.name;
-        return res.sendFile(path.join(__dirname, '../pages/password.html'));
+        return sendHtml(res, 'password');
     }
 
     res.redirect(link.url);
 });
+
+router.get('*', (_, res) => sendHtml(res, 'index'));
 
 export default router;

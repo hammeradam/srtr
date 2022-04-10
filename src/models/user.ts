@@ -1,6 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 
-interface User {
+export interface IUser {
     email: string;
     password: string;
     token: string;
@@ -8,7 +8,7 @@ interface User {
     links: Types.ObjectId[];
 }
 
-const schema = new Schema<User>({
+const schema = new Schema<IUser>({
     email: String,
     password: String,
     token: String,
@@ -16,4 +16,4 @@ const schema = new Schema<User>({
     links: [{ type: Schema.Types.ObjectId, ref: 'Link' }],
 });
 
-export const User = model<User>('User', schema);
+export const User = model<IUser>('User', schema);

@@ -84,7 +84,7 @@ router.post('/refresh_token', async (req, res) => {
 
         return res.json({ accessToken: createAccessToken(user) });
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(400);
         return res.json({ error: 'invalid_refresh_token' });
     }
