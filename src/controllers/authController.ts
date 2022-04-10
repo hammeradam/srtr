@@ -2,11 +2,7 @@ import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { hash, compare } from 'bcrypt';
 import { User } from 'models';
-import {
-    createAccessToken,
-    createRefreshToken,
-    sendRefreshToken,
-} from 'utils';
+import { createAccessToken, createRefreshToken, sendRefreshToken } from 'utils';
 
 const router = express.Router();
 
@@ -68,7 +64,9 @@ router.post('/refresh_token', async (req, res) => {
 
     try {
         const payload = jwt.verify(token, process.env.TOKEN_SECRET!);
-        const user = await User.findOne({ _id: (payload as JwtPayload).userId });
+        const user = await User.findOne({
+            _id: (payload as JwtPayload).userId,
+        });
 
         if (!user) {
             res.status(400);

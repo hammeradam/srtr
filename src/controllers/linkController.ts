@@ -14,14 +14,16 @@ const getUser = async (req: Request) => {
     }
 
     const payload = jwt.verify(token ?? '', process.env.TOKEN_SECRET!);
-    const user = await User.findOne({ _id: (payload as JwtPayload).userId }).populate('links');
+    const user = await User.findOne({
+        _id: (payload as JwtPayload).userId,
+    }).populate('links');
 
     return user;
-}
+};
 
 // CREATE
 router.post('/', async (req, res) => {
-    if (!await validateLink(req, res)) {
+    if (!(await validateLink(req, res))) {
         return res.status(400).end();
     }
 
@@ -33,7 +35,10 @@ router.post('/', async (req, res) => {
         name,
         url: req.body.url,
         hitCount: 0,
-        password: (req.body.password && req.body.password.length) ? (await hash(req.body.password, 10)) : null,
+        password:
+            req.body.password && req.body.password.length
+                ? await hash(req.body.password, 10)
+                : null,
         limit: req.body.limit,
         user: user ? user._id : null,
     });

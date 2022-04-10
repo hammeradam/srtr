@@ -7,4 +7,4 @@ export const sendHtml = (res: Response, page: string, status?: number) => {
     }
 
     return res.sendFile(path.join(__dirname, `../pages/${page}.html`));
-}
+};
