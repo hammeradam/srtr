@@ -1,6 +1,6 @@
 import express from 'express';
 import { Link } from 'models';
-import { sendHtml } from 'utils/sendHtml';
+import { sendHtml } from 'utils';
 
 const router = express.Router();
 

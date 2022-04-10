@@ -6,7 +6,7 @@ import {
     createAccessToken,
     createRefreshToken,
     sendRefreshToken,
-} from 'utils/auth';
+} from 'utils';
 
 const router = express.Router();
 

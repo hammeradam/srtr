@@ -1,8 +1,6 @@
 import express from 'express';
 import 'dotenv/config';
-import { connectToMongoDB } from './utils/connectToMongoDB';
-import { registerControllers } from './utils/registerControllers';
-import { registerMiddlewares } from './utils/registerMiddlewares';
+import { connectToMongoDB, registerControllers, registerMiddlewares } from 'utils';
 
 connectToMongoDB();
 
