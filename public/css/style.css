@@ -49,7 +49,7 @@ nav ul li.active  {
     background-color: black;
     border-radius: 50%;
     cursor: pointer;
-    transition: cubic-bezier(0, 0.06, 0.18, 1.69) .8s;
+    transition: cubic-bezier(0, 0.06, 0.18, 1.69) .5s;
 }
 
 .dot::after,
@@ -89,7 +89,7 @@ nav ul li.active  {
         background-color: white;
         border: 5px solid blueviolet;
         transform: translateY(100%);
-        transition: cubic-bezier(0, 0.06, 0.18, 1.69) .8s;
+        transition: cubic-bezier(0, 0.06, 0.5, 1.39) .5s;
     }
     
     nav ul {

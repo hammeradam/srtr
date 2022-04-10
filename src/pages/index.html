@@ -9,8 +9,8 @@
             content="Create short links within a few secounds!"
         />
         <title>srtr</title>
-        <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
-        <link rel="stylesheet" href="style.css" />
+        <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon" />
+        <link rel="stylesheet" href="/css/style.css" />
     </head>
     <body>
         <nav>
@@ -128,7 +128,13 @@
                     <p>hitcount: <span></span></p>
                 </div>
             </div>
-            <form id="login-form" method="POST" action="/api/auth/login" class="login-container d-none" autocomplete="off">
+            <form
+                id="login-form"
+                method="POST"
+                action="/api/auth/login"
+                class="login-container d-none"
+                autocomplete="off"
+            >
                 <h1>login</h1>
                 <div class="form-group">
                     <label for="login-email">email</label>
@@ -150,11 +156,17 @@
                     />
                     <span class="name-error error-text" />
                 </div>
-                
+
                 <button type="submit" class="btn">login</button>
                 <div class="error d-none"></div>
             </form>
-            <form id="register-form" method="POST" action="/api/auth/register" class="register-container d-none" autocomplete="off">
+            <form
+                id="register-form"
+                method="POST"
+                action="/api/auth/register"
+                class="register-container d-none"
+                autocomplete="off"
+            >
                 <h1>register</h1>
                 <div class="form-group">
                     <label for="register-email">email</label>
@@ -176,12 +188,19 @@
                     />
                     <span class="name-error error-text" />
                 </div>
-                
+
                 <button type="submit" class="btn">register</button>
                 <div class="error d-none"></div>
             </form>
         </main>
         <div class="dot"></div>
-        <script src="index.js"></script>
+        <script type="module" src="/js/index.js"></script>
+        <link rel="modulepreload" href="/js/validation.js" />
+        <link rel="modulepreload" href="/js/request.js" />
+        <link rel="modulepreload" href="/js/navigation.js" />
+        <link rel="modulepreload" href="/js/authentication.js" />
+        <link rel="modulepreload" href="/js/create.js" />
+        <link rel="modulepreload" href="/js/check.js" />
+        <link rel="modulepreload" href="/js/clipboard.js" />
     </body>
 </html>

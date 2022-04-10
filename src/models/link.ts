@@ -18,8 +18,8 @@ const schema = new Schema<ILink>({
     limit: Number,
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
-    }
+        ref: 'User',
+    },
 });
 
 export const Link = model<ILink>('Link', schema);
