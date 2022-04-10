@@ -262,3 +262,12 @@ const parseJwt = (token) =>
                 .join('')
         )
     );
+
+
+const dot = document.querySelector('.dot');
+const nav = document.querySelector('nav');
+
+dot.addEventListener('click', () => {
+    dot.classList.toggle('active');
+    nav.classList.toggle('open');
+});
