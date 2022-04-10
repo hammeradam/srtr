@@ -1,12 +1,12 @@
 import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { hash, compare } from 'bcrypt';
-import { User } from '../models/user';
+import { User } from 'models';
 import {
     createAccessToken,
     createRefreshToken,
     sendRefreshToken,
-} from '../utils/auth';
+} from 'utils/auth';
 
 const router = express.Router();
 

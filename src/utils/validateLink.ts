@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Link } from '../models/link';
+import { Link } from 'models';
 
 const validateUrl = (string: string) => {
     try {

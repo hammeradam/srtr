@@ -1,11 +1,10 @@
 import express, { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { hash, compare } from 'bcrypt';
-import { Link } from '../models/link';
-import { User } from '../models/user';
-import { validateLink } from '../utils/validateLink';
-import { generateName } from '../utils/generateName';
-import { sendHtml } from '../utils/sendHtml';
+import { User, Link } from 'models';
+import { validateLink } from 'utils/validateLink';
+import { generateName } from 'utils/generateName';
+import { sendHtml } from 'utils/sendHtml';
 
 const router = express.Router();
 
