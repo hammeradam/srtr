@@ -1,4 +1,3 @@
-// @ts-check
 export const copyToClipboard = (string) => {
     const element = document.createElement('textarea');
     element.value = string;

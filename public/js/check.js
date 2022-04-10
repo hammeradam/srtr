@@ -1,4 +1,3 @@
-// @ts-check
 import { sendRequest } from './request.js';
 import { errors, validateName } from './validation.js';
 

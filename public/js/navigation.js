@@ -1,4 +1,3 @@
-// @ts-check
 const navItems = document.querySelectorAll('nav ul li[data-container]');
 const containers = document.querySelectorAll('main > *');
 
@@ -24,7 +23,7 @@ const showComponent = (component, hideOthers = true) => {
 
 navItems.forEach((item) => {
     item.addEventListener('click', () => {
-        const component = item.getAttribute('data-container')
+        const component = item.getAttribute('data-container');
         showComponent(component);
 
         history.pushState(
@@ -37,8 +36,9 @@ navItems.forEach((item) => {
 
 showComponent(window.location.pathname.substring(1) || 'create', false);
 
-window.addEventListener('popstate', () => showComponent(window.location.pathname.substring(1) || 'create'));
-
+window.addEventListener('popstate', () =>
+    showComponent(window.location.pathname.substring(1) || 'create')
+);
 
 const dot = document.querySelector('.dot');
 const nav = document.querySelector('nav');

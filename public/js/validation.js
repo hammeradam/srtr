@@ -1,4 +1,3 @@
-// @ts-check
 export const validateUrl = (string) => {
     try {
         const url = new URL(string);

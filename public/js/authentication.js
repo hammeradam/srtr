@@ -1,5 +1,4 @@
-// @ts-check
-import { sendRequest} from './request.js';
+import { sendRequest } from './request.js';
 
 const loginLink = document.querySelector('[data-container="login"]');
 const registerLink = document.querySelector('[data-container="register"]');
@@ -18,7 +17,7 @@ const parseJwt = (token) =>
                 })
                 .join('')
         )
-);
+    );
 
 const getAccessToken = async () => {
     const request = await sendRequest('/api/auth/refresh_token', {
@@ -37,7 +36,7 @@ const getAccessToken = async () => {
         logoutLink.style.display = 'none';
         window.accessToken = '';
     }
-}
+};
 
 getAccessToken();
 

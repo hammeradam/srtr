@@ -1,4 +1,3 @@
-// @ts-check
 import { copyToClipboard } from './clipboard.js';
 import { sendRequest } from './request.js';
 import { validateUrl, validateName, errors } from './validation.js';
