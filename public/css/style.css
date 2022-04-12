@@ -16,6 +16,17 @@ body {
         Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+main > * {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1.4rem;
+    border: 3px black solid;
+    padding: 2rem;
+    box-shadow: 5px 5px 0px 0px blueviolet;
+}
+
 nav {
     position: fixed;
     top: 0;
@@ -28,6 +39,9 @@ nav ul {
     list-style: none;
     display: flex;
     gap: 20px;
+}
+
+nav ul li {
     cursor: pointer;
 }
 
@@ -107,17 +121,10 @@ nav ul li.active {
     nav.open {
         transform: translateY(0);
     }
-}
 
-main > * {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 1.4rem;
-    border: 3px black solid;
-    padding: 2rem;
-    box-shadow: 5px 5px 0px 0px blueviolet;
+    [data-container='profile'] {
+        order: 1;
+    }
 }
 
 .d-none {
@@ -242,6 +249,12 @@ details > div {
 summary {
     padding-bottom: 10px;
     cursor: pointer;
+}
+
+hr {
+    order: none;
+    width: 100%;
+    border-top: 2px solid black;
 }
 
 .auth-links {

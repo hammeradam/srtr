@@ -10,6 +10,7 @@ import {
     getGithubAccessToken,
     getGithubUserDetails,
     findOrCreateGithubUser,
+    sendMail,
     COOKIE_NAME,
 } from 'utils';
 import { Token } from 'models/token';
@@ -123,7 +124,7 @@ router.post('/forgotten-password', async (req, res) => {
         email,
     });
 
-    if (user) {
+    if (user?.email) {
         // TODO: send pw reset email
         await Token.deleteMany({ user: user._id });
 
@@ -131,6 +132,12 @@ router.post('/forgotten-password', async (req, res) => {
 
         console.log(
             `http://localhost:3000/reset-password?token=${token}&userId=${user._id}`
+        );
+
+        await sendMail(
+            [user.email],
+            'forgotten password',
+            '<b>Hello world?</b>'
         );
 
         const hashedToken = await hash(token, 10);

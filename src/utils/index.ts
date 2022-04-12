@@ -5,3 +5,4 @@ export * from './registerControllers';
 export * from './registerMiddleware';
 export * from './sendHtml';
 export * from './validateLink';
+export * from './mail';
