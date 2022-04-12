@@ -1,5 +1,5 @@
-import { sendRequest } from './request.js';
-import { navigateTo } from './navigation.js';
+import { REFRESH_TOKEN_PATH, sendRequest } from './request.js';
+import { navigateTo, showComponent } from './navigation.js';
 import { createFormValidator, email, equals, required } from './validation.js';
 
 const parseJwt = (token) =>
@@ -20,28 +20,39 @@ const parseJwt = (token) =>
 const loginLink = document.querySelector('[data-container="login"]');
 const registerLink = document.querySelector('[data-container="register"]');
 const logoutLink = document.querySelector('.logout-link');
+const profileLink = document.querySelector('[data-container="profile"]');
 
-const showLoggedInState = () => {
+const showLoggedInState = (user) => {
     loginLink.style.display = 'none';
     registerLink.style.display = 'none';
     logoutLink.style.display = 'block';
+
+    profileLink.innerHTML = user;
+    profileLink.style.display = 'block';
 };
 
 const showLoggedOutState = () => {
     loginLink.style.display = 'block';
     registerLink.style.display = 'block';
     logoutLink.style.display = 'none';
+
+    profileLink.innerHTML = '';
+    profileLink.style.display = 'none';
+};
+
+const login = async (request) => {
+    const response = await request.json();
+    window.accessToken = response.token;
+    showLoggedInState(response.user);
 };
 
 const getAccessToken = async () => {
-    const request = await sendRequest('/api/auth/refresh_token', {
+    const request = await sendRequest(REFRESH_TOKEN_PATH, {
         method: 'POST',
     });
 
     if (request.ok) {
-        const response = await request.json();
-        window.accessToken = response.accessToken;
-        showLoggedInState();
+        login(request);
     } else {
         showLoggedOutState();
         window.accessToken = '';
@@ -55,6 +66,7 @@ logoutLink.addEventListener('click', async () => {
         method: 'POST',
     });
 
+    showComponent('create');
     showLoggedOutState();
     window.accessToken = '';
 });
@@ -103,11 +115,8 @@ loginForm.addEventListener('submit', async (event) => {
     });
 
     if (request.ok) {
-        const response = await request.json();
-        window.accessToken = response.token;
-
+        login(request);
         navigateTo('create');
-        showLoggedInState();
     }
 });
 
@@ -155,11 +164,8 @@ registerForm.addEventListener('submit', async (event) => {
     });
 
     if (request.ok) {
-        const response = await request.json();
-        window.accessToken = response.token;
-
+        login(request);
         navigateTo('create');
-        showLoggedInState();
     }
 });
 
@@ -261,10 +267,11 @@ resetPasswordForm.addEventListener('submit', async (event) => {
     });
 
     if (request.ok) {
-        const response = await request.json();
-        window.accessToken = response.token;
-
+        login(request);
         navigateTo('create');
-        showLoggedInState();
     }
 });
+
+// setTimeout(() => {
+//     sendRequest('/ping');
+// }, 2000);

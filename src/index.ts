@@ -5,13 +5,11 @@ import {
     registerControllers,
     registerMiddleware,
 } from 'utils';
-import { authMiddleware } from 'middleware';
 
 connectToMongoDB();
 
 const app = express();
 
-app.get('/ping', authMiddleware, (_, res) => res.send('pong'));
 registerMiddleware(app);
 registerControllers(app);
 

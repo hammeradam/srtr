@@ -7,6 +7,9 @@ import {
     createAccessToken,
     createRefreshToken,
     sendRefreshToken,
+    getGithubAccessToken,
+    getGithubUserDetails,
+    findOrCreateGithubUser,
     COOKIE_NAME,
 } from 'utils';
 import { Token } from 'models/token';
@@ -40,6 +43,7 @@ router.post('/register', async (req, res) => {
 
     res.json({
         token,
+        user: user.name || user.email,
     });
 });
 
@@ -52,7 +56,7 @@ router.post('/login', async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    if (!user || !(await compare(password, user.password))) {
+    if (!user || !(await compare(password, user.password!))) {
         return res.status(400).send('Invalid Credentials');
     }
 
@@ -61,7 +65,18 @@ router.post('/login', async (req, res) => {
 
     res.json({
         token,
+        user: user.name || user.email,
     });
+});
+
+router.get('/callback/github', async (req, res) => {
+    const accessToken = await getGithubAccessToken(String(req.query.code));
+    const userData = await getGithubUserDetails(accessToken);
+    const user = await findOrCreateGithubUser(userData);
+
+    sendRefreshToken(res, createRefreshToken(user));
+
+    res.redirect('/');
 });
 
 router.post('/refresh_token', async (req, res) => {
@@ -72,7 +87,7 @@ router.post('/refresh_token', async (req, res) => {
     }
 
     try {
-        const payload = jwt.verify(token, process.env.TOKEN_SECRET!);
+        const payload = jwt.verify(token, process.env.TOKEN_SECRET);
         const user = await User.findOne({
             _id: (payload as JwtPayload).userId,
         });
@@ -86,7 +101,10 @@ router.post('/refresh_token', async (req, res) => {
 
         sendRefreshToken(res, createRefreshToken(user));
 
-        return res.json({ accessToken: createAccessToken(user) });
+        return res.json({
+            token: createAccessToken(user),
+            user: user.name || user.email,
+        });
     } catch (err) {
         console.error(err);
         res.status(400);
@@ -143,7 +161,11 @@ router.post('/reset-password', async (req, res) => {
 
     const user = await User.findOne({ _id: userId });
 
-    await user?.updateOne({
+    if (!user) {
+        return res.status(400).end();
+    }
+
+    await user.updateOne({
         password: await hash(password, 10),
     });
 
@@ -154,6 +176,7 @@ router.post('/reset-password', async (req, res) => {
 
     res.json({
         token: newToken,
+        user: user.name || user.email,
     });
 
     res.end();

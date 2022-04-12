@@ -9,7 +9,11 @@
             content="Create short links within a few secounds!"
         />
         <title>srtr</title>
-        <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon" />
+        <link
+            rel="shortcut icon"
+            href="/img/favicon.svg"
+            type="image/svg+xml"
+        />
         <link rel="stylesheet" href="/css/style.css" />
     </head>
     <body>
@@ -18,9 +22,12 @@
                 <li data-container="create">HOME</li>
                 <li data-container="check">CHECK</li>
                 <div class="auth-links">
-                    <li data-container="login">LOGIN</li>
-                    <li data-container="register">REGISTER</li>
-                    <li class="logout-link">LOGOUT</li>
+                    <li style="display: none" data-container="profile"></li>
+                    <li style="display: none" data-container="login">LOGIN</li>
+                    <li style="display: none" data-container="register">
+                        REGISTER
+                    </li>
+                    <li style="display: none" class="logout-link">LOGOUT</li>
                 </div>
             </ul>
         </nav>
@@ -98,7 +105,7 @@
                     </span>
                 </div>
             </form>
-            <form class="check-container d-none">
+            <form id="check-form" class="check-container d-none">
                 <h1>check</h1>
                 <div class="form-group">
                     <label for="check-name">name</label>
@@ -135,12 +142,17 @@
                     <span class="error-text"></span>
                 </div>
                 <button
-                    class="forgot-password-btn"
+                    class="btn forgot-password-btn"
                     data-container="forgot-password"
                 >
                     forgot password?
                 </button>
                 <button type="submit" class="btn">login</button>
+                <a
+                    class="btn"
+                    href="https://github.com/login/oauth/authorize?client_id=9fd26d2f35d5520e4f3a&redirect_uri=http://localhost:3000/api/auth/callback/github"
+                    >login with github</a
+                >
                 <div class="error d-none"></div>
             </form>
             <form id="register-form" class="register-container d-none">

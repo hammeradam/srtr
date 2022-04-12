@@ -1,15 +1,19 @@
 import { Schema, model, Types } from 'mongoose';
 
 export interface IUser {
-    email: string;
-    password: string;
-    token: string;
-    tokenVersion: number;
+    email?: string;
+    githubId?: number;
+    name?: string;
+    password?: string;
+    token?: string;
+    tokenVersion?: number;
     links: Types.ObjectId[];
 }
 
 const schema = new Schema<IUser>({
     email: String,
+    githubId: Number,
+    name: String,
     password: String,
     token: String,
     tokenVersion: Number,

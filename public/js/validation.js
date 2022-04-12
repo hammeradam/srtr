@@ -60,6 +60,7 @@ export const createFormValidator = (inputs) => {
 export const errors = {
     name_taken: 'name is already taken',
     name_invalid: 'invalid name (A-z0-9-_.)',
+    name_required: 'name is required',
     url_invalid: 'invalid URL',
     url_required: 'URL is required',
     unknown: 'something bad happened, try again later',

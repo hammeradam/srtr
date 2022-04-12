@@ -13,7 +13,7 @@ const getUser = async (req: Request) => {
         return null;
     }
 
-    const payload = jwt.verify(token ?? '', process.env.TOKEN_SECRET!);
+    const payload = jwt.verify(token ?? '', process.env.TOKEN_SECRET);
     const user = await User.findOne({
         _id: (payload as JwtPayload).userId,
     }).populate('links');
@@ -68,8 +68,7 @@ router.get('/', async (_req, res) =>
 // PASSWORD
 router.post('/password', async (req, res) => {
     const { password } = req.body;
-    // @ts-ignore
-    const name = req.session.name!;
+    const name = req.session.name;
 
     if (!password?.length || !name?.length) {
         return sendHtml(res, '400', 400);

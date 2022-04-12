@@ -1,19 +1,15 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "typeRoots": [
-        "./src/types"
-    ],
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
-    "baseUrl": "./src",
-    "outDir": "dist"
-  },
-  "include": [
-    "./src/**/*"
-  ],
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "typeRoots": ["./src/types"],
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "noImplicitAny": false,
+        "skipLibCheck": true,
+        "baseUrl": "./src",
+        "outDir": "dist"
+    },
+    "include": ["./src/**/*"]
 }

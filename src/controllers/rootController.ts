@@ -1,4 +1,5 @@
 import express from 'express';
+import { authMiddleware } from 'middleware';
 import { Link } from 'models';
 import { sendHtml } from 'utils';
 
@@ -14,13 +15,14 @@ router.get('/l/:name', async (req, res) => {
     await link.updateOne({ hitCount: ++link.hitCount });
 
     if (link.password) {
-        // @ts-ignore
         req.session.name = link.name;
         return sendHtml(res, 'password');
     }
 
     res.redirect(link.url);
 });
+
+router.get('/ping', authMiddleware, (_, res) => res.send('pong'));
 
 router.get('*', (_, res) => sendHtml(res, 'index'));
 

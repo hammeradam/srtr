@@ -170,16 +170,11 @@ input:-webkit-autofill {
     bottom: 0;
 }
 
-.forgot-password-btn {
-    font-size: 10px;
-    align-self: flex-end;
-}
-
 .form-group .error-text.show {
     transform: translateY(100%);
 }
 
-button {
+.btn {
     color: white;
     background: black;
     border: none;
@@ -187,10 +182,16 @@ button {
     cursor: pointer;
     transition: box-shadow 0.3s ease;
     font-size: 24px;
+    text-decoration: none;
 }
 
-button:hover,
-button:focus {
+.forgot-password-btn {
+    font-size: 10px;
+    align-self: flex-end;
+}
+
+.btn:hover,
+.btn:focus {
     outline: none;
     box-shadow: 2px 2px 0px 0px blueviolet;
 }

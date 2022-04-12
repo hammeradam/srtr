@@ -22,10 +22,6 @@ createSuccess.addEventListener('click', () => {
     copied.classList.remove('d-none');
 });
 
-setTimeout(() => {
-    sendRequest('/ping');
-}, 2000);
-
 const createForm = document.querySelector('#create-form');
 const createFormInputs = [
     {

@@ -1,22 +1,38 @@
 import { sendRequest } from './request.js';
-import { errors, name } from './validation.js';
+import { errors, name, required, createFormValidator } from './validation.js';
 
-const submitButton = document.querySelector('.check-container button');
 const nameInput = document.querySelector('.check-container input[name="name"]');
 const checkErrorMessage = document.querySelector('.check-container .error');
 const checkSuccess = document.querySelector('.check-container .success');
 const checkNameError = document.querySelector('.check-container .name-error');
 
-submitButton.addEventListener('click', async () => {
-    checkNameError.classList.remove('show');
-    checkErrorMessage.classList.add('d-none');
-    checkSuccess.classList.add('d-none');
+const checkForm = document.querySelector('#check-form');
+const checkFormInputs = [
+    {
+        element: nameInput,
+        rules: [
+            {
+                validator: required,
+                errorMessage: errors.name_required,
+            },
+            {
+                validator: name,
+                errorMessage: errors.name_invalid,
+            },
+        ],
+    },
+];
+const validateCheckForm = createFormValidator(checkFormInputs);
 
-    if (!name(nameInput.value)) {
-        checkNameError.textContent = errors.name_invalid;
-        checkNameError.classList.add('show');
+checkForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!validateCheckForm()) {
         return;
     }
+
+    checkErrorMessage.classList.add('d-none');
+    checkSuccess.classList.add('d-none');
 
     const response = await sendRequest(`/api/url/${nameInput.value}`);
 

@@ -11,7 +11,7 @@ export const registerMiddleware = (app: Express) => {
     app.use(loggerMiddleware);
     app.use(
         session({
-            secret: process.env.SESSION_SECRET!,
+            secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: true,
         })
