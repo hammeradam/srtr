@@ -17,7 +17,7 @@ const schema = new Schema<ILink>({
     hitCount: Number,
     limit: Number,
     user: {
-        type: Schema.Types.ObjectId,
+        type: Types.ObjectId,
         ref: 'User',
     },
 });

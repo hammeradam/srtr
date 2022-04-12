@@ -1,5 +1,5 @@
 import { sendRequest } from './request.js';
-import { errors, validateName } from './validation.js';
+import { errors, name } from './validation.js';
 
 const submitButton = document.querySelector('.check-container button');
 const nameInput = document.querySelector('.check-container input[name="name"]');
@@ -12,7 +12,7 @@ submitButton.addEventListener('click', async () => {
     checkErrorMessage.classList.add('d-none');
     checkSuccess.classList.add('d-none');
 
-    if (!validateName(nameInput.value)) {
+    if (!name(nameInput.value)) {
         checkNameError.textContent = errors.name_invalid;
         checkNameError.classList.add('show');
         return;

@@ -1,46 +1,62 @@
 import { copyToClipboard } from './clipboard.js';
 import { sendRequest } from './request.js';
-import { validateUrl, validateName, errors } from './validation.js';
+import {
+    url,
+    name,
+    errors,
+    required,
+    optional,
+    createFormValidator,
+} from './validation.js';
 
 const urlError = document.querySelector('.url-error');
 const nameError = document.querySelector('.name-error');
-const submitButton = document.querySelector('.create-container button');
 const errorMessage = document.querySelector('.create-container .error');
-const urlInput = document.querySelector('.create-container input[name="url"]');
-const nameInput = document.querySelector(
-    '.create-container input[name="name"]'
-);
-const passwordInput = document.querySelector(
-    '.create-container input[name="password"]'
-);
-const limitInput = document.querySelector(
-    '.create-container input[name="limit"]'
-);
 const createSuccess = document.querySelector('.create-container .success');
 const copy = document.querySelector('.copy');
 const copied = document.querySelector('.copied');
 
-const createLink = async () => {
-    errorMessage.classList.add('d-none');
-    createSuccess.classList.add('d-none');
-    urlError.classList.remove('show');
-    nameError.classList.remove('show');
+createSuccess.addEventListener('click', () => {
+    copyToClipboard(createSuccess.getAttribute('data-url'));
+    copy.classList.add('d-none');
+    copied.classList.remove('d-none');
+});
 
-    if (!urlInput.value) {
-        urlError.textContent = errors.url_required;
-        urlError.classList.add('show');
-        return;
-    }
+setTimeout(() => {
+    sendRequest('/ping');
+}, 2000);
 
-    if (!validateUrl(urlInput.value)) {
-        urlError.textContent = errors.url_invalid;
-        urlError.classList.add('show');
-        return;
-    }
+const createForm = document.querySelector('#create-form');
+const createFormInputs = [
+    {
+        element: document.querySelector('#create-url'),
+        rules: [
+            {
+                validator: url,
+                errorMessage: errors.url_invalid,
+            },
+            {
+                validator: required,
+                errorMessage: errors.url_required,
+            },
+        ],
+    },
+    {
+        element: document.querySelector('#create-name'),
+        rules: [
+            {
+                validator: optional(name),
+                errorMessage: errors.name_invalid,
+            },
+        ],
+    },
+];
+const validateCreateForm = createFormValidator(createFormInputs);
 
-    if (nameInput.value && !validateName(nameInput.value)) {
-        nameError.textContent = errors.name_invalid;
-        nameError.classList.add('show');
+createForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!validateCreateForm()) {
         return;
     }
 
@@ -49,12 +65,7 @@ const createLink = async () => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            url: urlInput.value,
-            name: nameInput.value,
-            password: passwordInput.value,
-            limit: limitInput.value,
-        }),
+        body: JSON.stringify(Object.fromEntries(new FormData(createForm))),
     });
 
     if (!response.ok) {
@@ -89,17 +100,6 @@ const createLink = async () => {
     copied.classList.add('d-none');
     createSuccess.setAttribute(
         'data-url',
-        new URL(name, window.location.origin).href
+        new URL(`l/${name}`, window.location.origin).href
     );
-};
-
-const copyCreatedUrl = () => {
-    copyToClipboard(createSuccess.getAttribute('data-url'));
-    copy.classList.add('d-none');
-    copied.classList.remove('d-none');
-};
-
-urlInput.addEventListener('input', () => urlError.classList.remove('show'));
-nameInput.addEventListener('input', () => nameError.classList.remove('show'));
-submitButton.addEventListener('click', createLink);
-createSuccess.addEventListener('click', copyCreatedUrl);
+});

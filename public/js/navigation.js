@@ -1,7 +1,7 @@
-const navItems = document.querySelectorAll('nav ul li[data-container]');
+const navItems = document.querySelectorAll('[data-container]');
 const containers = document.querySelectorAll('main > *');
 
-const showComponent = (component, hideOthers = true) => {
+export const showComponent = (component, hideOthers = true) => {
     if (hideOthers) {
         containers.forEach((container) => {
             container.classList.add('d-none');
@@ -14,24 +14,27 @@ const showComponent = (component, hideOthers = true) => {
 
     document
         .querySelector(`.${component}-container`)
-        .classList.remove('d-none');
+        ?.classList.remove('d-none');
 
     document
         .querySelector(`[data-container="${component}"]`)
-        .classList.add('active');
+        ?.classList.add('active');
+};
+
+export const navigateTo = (component) => {
+    showComponent(component);
+
+    history.pushState(
+        null,
+        null,
+        `/${component === 'create' ? '' : component}`
+    );
 };
 
 navItems.forEach((item) => {
-    item.addEventListener('click', () => {
-        const component = item.getAttribute('data-container');
-        showComponent(component);
-
-        history.pushState(
-            null,
-            null,
-            `/${component === 'create' ? '' : component}`
-        );
-    });
+    item.addEventListener('click', () =>
+        navigateTo(item.getAttribute('data-container'))
+    );
 });
 
 showComponent(window.location.pathname.substring(1) || 'create', false);

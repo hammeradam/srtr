@@ -1,4 +1,7 @@
+import { Response } from 'express';
 import jwt from 'jsonwebtoken';
+
+export const COOKIE_NAME = 'jid';
 
 export const createAccessToken = (user) => {
     return jwt.sign(
@@ -20,8 +23,16 @@ export const createRefreshToken = (user) => {
     );
 };
 
-export const sendRefreshToken = (res, token) => {
-    res.cookie('jid', token, {
+export const sendRefreshToken = (res: Response, token: string) => {
+    res.cookie(COOKIE_NAME, token, {
+        httpOnly: true,
+        path: '/api/auth/refresh_token',
+        secure: false,
+    });
+};
+
+export const clearRefreshToken = (res: Response) => {
+    res.clearCookie(COOKIE_NAME, {
         httpOnly: true,
         path: '/api/auth/refresh_token',
         secure: false,
