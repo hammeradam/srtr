@@ -2,7 +2,7 @@ import { sendRequest } from './request.js';
 import { errors, name, required, createFormValidator } from './validation.js';
 
 const nameInput = document.querySelector('.check-container input[name="name"]');
-const checkErrorMessage = document.querySelector('.check-container .error');
+const checkError = document.querySelector('.check-container .error');
 const checkSuccess = document.querySelector('.check-container .success');
 const checkNameError = document.querySelector('.check-container .name-error');
 
@@ -31,14 +31,14 @@ checkForm.addEventListener('submit', async (event) => {
         return;
     }
 
-    checkErrorMessage.classList.add('d-none');
+    checkError.classList.add('d-none');
     checkSuccess.classList.add('d-none');
 
     const response = await sendRequest(`/api/url/${nameInput.value}`);
 
     if (!response.ok) {
         if (response.status === 404) {
-            checkErrorMessage.classList.remove('d-none');
+            checkError.classList.remove('d-none');
             return;
         }
         const { error } = await response.json();

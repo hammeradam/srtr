@@ -12,6 +12,7 @@ import {
     findOrCreateGithubUser,
     sendMail,
     COOKIE_NAME,
+    buildMailHtml,
 } from 'utils';
 import { Token } from 'models/token';
 import crypto from 'crypto';
@@ -137,7 +138,12 @@ router.post('/forgotten-password', async (req, res) => {
         await sendMail(
             [user.email],
             'forgotten password',
-            '<b>Hello world?</b>'
+            buildMailHtml(
+                'forgotten password',
+                'you can reset your password by clicking the link below',
+                'reset password',
+                `http://localhost:3000/reset-password?token=${token}&userId=${user._id}`
+            )
         );
 
         const hashedToken = await hash(token, 10);

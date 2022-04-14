@@ -5,6 +5,52 @@
 }
 
 body {
+    --info: #6595ed;
+    --success: #79b374;
+    --warning: #ffbe47;
+    --error: #ff7e75;
+    --background: #fff;
+    --text: #000;
+    --accent: blueviolet;
+}
+
+body.dark {
+    --background: #252525;
+    --text: #fff;
+}
+
+#darkModeToggle {
+    box-shadow: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text);
+}
+
+#darkModeToggle:hover {
+    color: var(--accent);
+}
+
+#darkModeToggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+#sun {
+    display: none;
+}
+
+body.dark #moon {
+    display: none;
+}
+
+body.dark #sun {
+    display: block;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -22,9 +68,9 @@ main > * {
     align-items: center;
     flex-direction: column;
     gap: 1.4rem;
-    border: 3px black solid;
+    border: 3px var(--text) solid;
     padding: 2rem;
-    box-shadow: 5px 5px 0px 0px blueviolet;
+    box-shadow: 5px 5px 0px 0px var(--accent);
 }
 
 nav {
@@ -46,12 +92,12 @@ nav ul li {
 }
 
 nav ul li:hover {
-    color: blueviolet;
+    color: var(--accent);
 }
 
 nav ul li.active {
-    color: blueviolet;
-    border-bottom: 2px solid blueviolet;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
 }
 
 .dot {
@@ -61,7 +107,7 @@ nav ul li.active {
     right: 30px;
     width: 40px;
     height: 40px;
-    background-color: black;
+    background-color: var(--text);
     border-radius: 50%;
     cursor: pointer;
     transition: cubic-bezier(0, 0.06, 0.18, 1.69) 0.5s;
@@ -70,7 +116,7 @@ nav ul li.active {
 .dot::after,
 .dot::before {
     content: '';
-    background-color: white;
+    background-color: var(--background);
     position: absolute;
     left: 50%;
     top: 50%;
@@ -101,8 +147,8 @@ nav ul li.active {
         position: fixed;
         bottom: 0;
         top: unset;
-        background-color: white;
-        border: 5px solid blueviolet;
+        background-color: var(--background);
+        border-top: 5px solid var(--accent);
         transform: translateY(100%);
         transition: cubic-bezier(0, 0.06, 0.5, 1.39) 0.5s;
     }
@@ -125,6 +171,10 @@ nav ul li.active {
     [data-container='profile'] {
         order: 1;
     }
+
+    #darkModeToggle {
+        order: 1;
+    }
 }
 
 .d-none {
@@ -138,25 +188,27 @@ nav ul li.active {
 }
 
 .form-group input {
+    background-color: var(--background);
+    color: var(--text);
+    border: 2px var(--text) solid;
     border-radius: 0;
-    border: 2px black solid;
     padding: 5px 10px;
     transition: box-shadow 0.3s ease;
     font-size: 24px;
 }
 
 .form-group input:focus {
-    box-shadow: 2px 2px 0px 0px blueviolet;
+    box-shadow: 2px 2px 0px 0px var(--accent);
     outline: none;
 }
 
 .form-group input::placeholder {
-    color: blueviolet;
+    color: var(--accent);
     opacity: 0.6;
 }
 
 .form-group label {
-    color: blueviolet;
+    color: var(--accent);
     font-weight: bold;
     margin-bottom: 3px;
 }
@@ -166,8 +218,8 @@ input:-webkit-autofill {
 }
 
 .form-group .error-text {
-    background: #ff7e75;
-    color: white;
+    background: var(--error);
+    color: var(--background);
     font-size: 14px;
     padding: 2px 5px;
     z-index: -1;
@@ -182,8 +234,8 @@ input:-webkit-autofill {
 }
 
 .btn {
-    color: white;
-    background: black;
+    color: var(--background);
+    background: var(--text);
     border: none;
     padding: 5px 10px;
     cursor: pointer;
@@ -200,21 +252,7 @@ input:-webkit-autofill {
 .btn:hover,
 .btn:focus {
     outline: none;
-    box-shadow: 2px 2px 0px 0px blueviolet;
-}
-
-.error {
-    color: #ff7e75;
-    border: 2px #ff7e75 solid;
-    padding: 10px;
-    text-align: center;
-}
-
-.success {
-    color: green;
-    border: 2px green solid;
-    padding: 10px;
-    opacity: 0.6;
+    box-shadow: 2px 2px 0px 0px var(--accent);
 }
 
 .create-container .success {
@@ -228,11 +266,24 @@ input:-webkit-autofill {
     align-items: flex-end;
 }
 
-.success a {
-    color: green;
+main .error {
+    color: var(--error);
+    border: 2px var(--error) solid;
+    padding: 10px;
+    text-align: center;
 }
 
-.success svg {
+main .success {
+    color: var(--success);
+    border: 2px var(--success) solid;
+    padding: 10px;
+}
+
+main .success a {
+    color: var(--success);
+}
+
+main .success svg {
     width: 20px;
 }
 
@@ -254,7 +305,7 @@ summary {
 hr {
     order: none;
     width: 100%;
-    border-top: 2px solid black;
+    border-top: 2px solid var(--text);
 }
 
 .auth-links {
@@ -266,3 +317,104 @@ hr {
 .auth-links > [data-container='logout'] {
     display: none;
 }
+
+#notificationContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+.notification {
+    color: var(--background);
+    padding: 1rem;
+    padding-left: calc(2rem + 2px);
+    margin-block: 0.5rem;
+    animation: notificationAppearKeyframes 0.3s;
+    animation-iteration-count: 1;
+    display: flex;
+    width: 300px;
+    position: relative;
+}
+
+.notification::before {
+    content: '';
+    width: 2px;
+    background-color: var(--background);
+    position: absolute;
+    top: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+}
+
+.notification.info {
+    background-color: var(--info);
+}
+
+.notification.success {
+    background-color: var(--success);
+}
+
+.notification.warning {
+    background-color: var(--warning);
+}
+
+.notification.error {
+    background-color: var(--error);
+}
+
+.notification.can-close {
+    padding-right: 2rem;
+}
+
+/* .notification.remove {
+    animation: notificationDisappearKeyframes 0.5s;
+    animation-direction: reverse;
+} */
+
+.notification__close {
+    user-select: none;
+    margin-left: 10px;
+    content: '\2715';
+    cursor: pointer;
+    width: 23px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.notification__close:hover {
+    background-color: #ffffff50;
+}
+
+@keyframes notificationAppearKeyframes {
+    0% {
+        transform: translateX(300px);
+    }
+
+    90% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* @keyframes notificationDisappearKeyframes {
+    0% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(300px);
+    }
+} */

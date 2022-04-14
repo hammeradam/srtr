@@ -170,6 +170,12 @@ registerForm.addEventListener('submit', async (event) => {
 });
 
 // forgot password
+const forgotPasswordSuccess = document.querySelector(
+    '#forgot-password-form .success'
+);
+const forgotPasswordError = document.querySelector(
+    '#forgot-password-form .error'
+);
 const forgotPasswordForm = document.querySelector('#forgot-password-form');
 const forgotPasswordFormInputs = [
     {
@@ -197,6 +203,9 @@ forgotPasswordForm.addEventListener('submit', async (event) => {
         return;
     }
 
+    forgotPasswordSuccess.classList.add('d-none');
+    forgotPasswordError.classList.add('d-none');
+
     const request = await sendRequest('/api/auth/forgotten-password', {
         method: 'POST',
         headers: {
@@ -208,8 +217,12 @@ forgotPasswordForm.addEventListener('submit', async (event) => {
     });
 
     if (request.ok) {
-        console.log('yaay');
+        forgotPasswordSuccess.classList.remove('d-none');
+
+        return;
     }
+
+    forgotPasswordError.classList.remove('d-none');
 });
 
 // reset password
