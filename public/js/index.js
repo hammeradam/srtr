@@ -1,6 +1,4 @@
-import './theme.js';
-import './navigation.js';
-import './authentication.js';
-import './create.js';
-import './check.js';
-import './notification.js';
+import './utils/theme.js';
+import './utils/navigation.js';
+import './utils/authentication.js';
+import './utils/notifications.js';
