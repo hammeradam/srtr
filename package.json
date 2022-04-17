@@ -14,8 +14,8 @@
     "author": "",
     "license": "ISC",
     "engines": {
-        "node": ">14",
-        "npm": ">6"
+        "node": "^14",
+        "npm": "^6"
     },
     "dependencies": {
         "axios": "^0.26.1",
