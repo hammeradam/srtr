@@ -3,7 +3,7 @@ import { navigateTo } from '../utils/navigation.js';
 import { createFormValidator, email, required } from '../utils/validation.js';
 import { createElement } from '../utils/createElement.js';
 import { inputGroup } from './inputGroup.js';
-import { setLogin } from '../utils/authentication.js';
+import { getRedirectUri, setLogin } from '../utils/authentication.js';
 
 export const login = () => {
     const inputs = [
