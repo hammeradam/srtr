@@ -8,7 +8,7 @@ import {
     required,
 } from '../utils/validation.js';
 import { inputGroup } from './inputGroup.js';
-import { setLogin } from './login.js';
+import { setLogin } from '../utils/authentication.js';
 
 export const register = () => {
     const inputs = [
@@ -55,7 +55,7 @@ export const register = () => {
 
         if (request.ok) {
             setLogin(request);
-            navigateTo('create');
+            navigateTo('');
         }
     };
 

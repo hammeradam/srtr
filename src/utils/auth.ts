@@ -2,16 +2,20 @@ import { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { User } from 'models';
+import { URLSearchParams } from 'url';
 
 export const COOKIE_NAME = 'jid';
-export const GITHUB_URL = 'https://github.com/login/oauth/access_token';
+export const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
+export const GITHUB_USER_URL = 'https://api.github.com/user';
+export const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+export const GOOGLE_USER_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
 export const createAccessToken = (user) => {
     return jwt.sign(
         { userId: user._id, email: user.email },
         process.env.TOKEN_SECRET,
         {
-            expiresIn: '1s',
+            expiresIn: '1h',
         }
     );
 };
@@ -42,9 +46,52 @@ export const clearRefreshToken = (res: Response) => {
     });
 };
 
+export const getGoogleAccessToken = async (code: string): Promise<string> => {
+    const params = new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: 'http://localhost:3000/api/auth/callback/google',
+        code,
+    });
+
+    const response = await axios.post(GOOGLE_TOKEN_URL, params.toString(), {
+        headers: {
+            Accept: 'application/x-www-form-urlencoded',
+        },
+    });
+
+    return response.data.access_token;
+};
+
+export const getGoogleUserDetails = async (accessToken: string) => {
+    const response = await axios.get(GOOGLE_USER_URL, {
+        headers: {
+            Authorization: 'Bearer ' + accessToken,
+        },
+    });
+    return response.data;
+};
+
+export const findOrCreategoogleUser = async (googleData: any) => {
+    const user = await User.findOne({ googleId: googleData.id });
+
+    if (user) {
+        return user;
+    }
+
+    const newUser = await User.create({
+        googleId: googleData.id,
+        name: googleData.name,
+        email: googleData.email,
+    });
+
+    return newUser;
+};
+
 export const getGithubAccessToken = async (code: string): Promise<string> => {
     const response = await axios.post(
-        GITHUB_URL,
+        GITHUB_TOKEN_URL,
         {},
         {
             params: {
@@ -62,7 +109,7 @@ export const getGithubAccessToken = async (code: string): Promise<string> => {
 };
 
 export const getGithubUserDetails = async (accessToken: string) => {
-    const response = await axios.get('https://api.github.com/user', {
+    const response = await axios.get(GITHUB_USER_URL, {
         headers: {
             Authorization: 'token ' + accessToken,
         },
@@ -81,6 +128,7 @@ export const findOrCreateGithubUser = async (githubData: any) => {
     const newUser = await User.create({
         githubId: githubData.id,
         name: githubData.login,
+        email: githubData?.email,
     });
 
     return newUser;

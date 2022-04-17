@@ -3,26 +3,7 @@ import { navigateTo } from '../utils/navigation.js';
 import { createFormValidator, email, required } from '../utils/validation.js';
 import { createElement } from '../utils/createElement.js';
 import { inputGroup } from './inputGroup.js';
-
-const loginLink = document.querySelector('[data-container="login"]');
-const registerLink = document.querySelector('[data-container="register"]');
-const logoutLink = document.querySelector('.logout-link');
-const profileLink = document.querySelector('[data-container="profile"]');
-
-const showLoggedInState = (user) => {
-    loginLink.style.display = 'none';
-    registerLink.style.display = 'none';
-    logoutLink.style.display = 'block';
-
-    profileLink.innerHTML = user;
-    profileLink.style.display = 'block';
-};
-
-export const setLogin = async (request) => {
-    const response = await request.json();
-    window.accessToken = response.token;
-    showLoggedInState(response.user);
-};
+import { setLogin } from '../utils/authentication.js';
 
 export const login = () => {
     const inputs = [
@@ -69,7 +50,7 @@ export const login = () => {
 
         if (request.ok) {
             setLogin(request);
-            navigateTo('create');
+            navigateTo('');
         }
     };
 
@@ -106,7 +87,16 @@ export const login = () => {
             createElement('a', {
                 text: 'login with github',
                 classList: ['btn'],
-                href: 'https://github.com/login/oauth/authorize?client_id=9fd26d2f35d5520e4f3a&redirect_uri=http://localhost:3000/api/auth/callback/github',
+                href: `https://github.com/login/oauth/authorize?client_id=9fd26d2f35d5520e4f3a&redirect_uri=${getRedirectUri(
+                    'github'
+                )}`,
+            }),
+            createElement('a', {
+                text: 'login with google',
+                classList: ['btn'],
+                href: `https://accounts.google.com/o/oauth2/v2/auth?scope=openid%20email%20profile&response_type=code&redirect_uri=${getRedirectUri(
+                    'github'
+                )}&client_id=697090043703-5v8qd9p8efre0pdfo6s2c2ci5k9pld16.apps.googleusercontent.com`,
             }),
         ],
         events: {

@@ -19,8 +19,12 @@
     <body>
         <nav>
             <ul>
-                <li data-container="create">HOME</li>
-                <li data-container="check">CHECK</li>
+                <li data-container="">
+                    <a href="/">HOME</a>
+                </li>
+                <li data-container="check">
+                    <a href="/check">CHECK</a>
+                </li>
                 <div class="auth-links">
                     <button id="darkModeToggle">
                         <svg
@@ -94,18 +98,20 @@
                         </svg>
                     </button>
                     <li style="display: none" data-container="profile"></li>
-                    <li style="display: none" data-container="login">LOGIN</li>
-                    <li style="display: none" data-container="register">
-                        REGISTER
+                    <li style="display: none" data-container="login">
+                        <a href="/">LOGIN</a>
                     </li>
-                    <li style="display: none" class="logout-link">LOGOUT</li>
+                    <li style="display: none" data-container="register">
+                        <a href="/">REGISTER</a>
+                    </li>
+                    <li style="display: none" class="logout-link">
+                        <a href="/">LOGOUT</a>
+                    </li>
                 </div>
             </ul>
         </nav>
         <div class="dot"></div>
         <main></main>
-
-        <div id="notificationContainer"></div>
     </body>
     <script type="module" src="/js/index.js"></script>
 </html>

@@ -1,6 +1,16 @@
 import { createElement } from './createElement.js';
 
-const notificationContainer = document.querySelector('#notificationContainer');
+const findOrCreateConteiner = () => {
+    const container = document.querySelector('#notificationContainer');
+    if (container) {
+        return container;
+    }
+
+    const newContainer = createElement('div', { id: 'notificationContainer' });
+    document.querySelector('body').appendChild(newContainer);
+
+    return newContainer;
+};
 
 const remove = (notification) => {
     notification.classList.add('notification--remove');
@@ -51,7 +61,7 @@ const create = ({
         setTimeout(() => remove(notification), timeout);
     }
 
-    notificationContainer.appendChild(notification);
+    findOrCreateConteiner().appendChild(notification);
 };
 
 export const info = ({ title, content, timeout, isClosable }) =>

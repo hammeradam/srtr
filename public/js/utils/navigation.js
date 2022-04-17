@@ -42,16 +42,17 @@ export const navigateTo = (component) => {
 };
 
 navItems.forEach((item) => {
-    item.addEventListener('click', () =>
-        navigateTo(item.getAttribute('data-container'))
-    );
+    item.addEventListener('click', (event) => {
+        event.preventDefault();
+        navigateTo(item.getAttribute('data-container'));
+    });
 });
 
 navigateTo(window.location.pathname.substring(1));
 
-window.addEventListener('popstate', () =>
-    showComponent(window.location.pathname.substring(1))
-);
+// window.addEventListener('popstate', () =>
+//     showComponent(window.location.pathname.substring(1))
+// );
 
 const dot = document.querySelector('.dot');
 const nav = document.querySelector('nav');

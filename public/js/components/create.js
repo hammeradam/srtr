@@ -1,4 +1,3 @@
-// @ts-check
 import { createElement } from '../utils/createElement.js';
 import { sendRequest } from '../utils/sendRequest.js';
 import {

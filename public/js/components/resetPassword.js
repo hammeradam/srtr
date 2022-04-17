@@ -61,7 +61,7 @@ export const resetPassword = () => {
 
         if (request.ok) {
             login(request);
-            navigateTo('create');
+            navigateTo('');
         }
     };
 

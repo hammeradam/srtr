@@ -3,6 +3,7 @@ import { Schema, model, Types } from 'mongoose';
 export interface IUser {
     email?: string;
     githubId?: number;
+    googleId?: number;
     name?: string;
     password?: string;
     token?: string;
@@ -13,6 +14,7 @@ export interface IUser {
 const schema = new Schema<IUser>({
     email: String,
     githubId: Number,
+    googleId: Number,
     name: String,
     password: String,
     token: String,

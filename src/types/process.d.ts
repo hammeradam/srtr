@@ -10,10 +10,13 @@ declare namespace NodeJS {
         GITHUB_CLIENT_ID: string;
         GITHUB_CLIENT_SECRET: string;
 
-        EMAIL_SERVER_USER: 'elta.wintheiser53@ethereal.email';
-        EMAIL_SERVER_PASSWORD: PfZTddJGpSqkDPR5XK;
-        EMAIL_SERVER_HOST: 'smtp.ethereal.email';
-        EMAIL_SERVER_PORT: 587;
-        EMAIL_FROM: 'elta.wintheiser53@ethereal.email';
+        GOOGLE_CLIENT_ID: string;
+        GOOGLE_CLIENT_SECRET: string;
+
+        EMAIL_SERVER_USER: string;
+        EMAIL_SERVER_PASSWORD: string;
+        EMAIL_SERVER_HOST: string;
+        EMAIL_SERVER_PORT: number;
+        EMAIL_FROM: string;
     }
 }

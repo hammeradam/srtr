@@ -2,6 +2,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    transition: background-color;
 }
 
 body {
@@ -89,15 +90,20 @@ nav ul {
 
 nav ul li {
     cursor: pointer;
+    color: var(--text);
 }
 
-nav ul li:hover {
+nav ul li:hover a {
     color: var(--accent);
 }
 
-nav ul li.active {
+nav ul li.active a {
     color: var(--accent);
     border-bottom: 2px solid var(--accent);
+}
+nav ul li a {
+    color: currentColor;
+    text-decoration: none;
 }
 
 .dot {
@@ -218,7 +224,7 @@ input:-webkit-autofill {
 }
 
 .form-group .form-group__error {
-    background: var(--error);
+    background-color: var(--error);
     color: var(--background);
     font-size: 14px;
     padding: 2px 5px;
@@ -235,7 +241,7 @@ input:-webkit-autofill {
 
 .btn {
     color: var(--background);
-    background: var(--text);
+    background-color: var(--text);
     border: none;
     padding: 5px 10px;
     cursor: pointer;

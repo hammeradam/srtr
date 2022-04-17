@@ -13,6 +13,9 @@ import {
     sendMail,
     COOKIE_NAME,
     buildMailHtml,
+    getGoogleAccessToken,
+    getGoogleUserDetails,
+    findOrCreategoogleUser,
 } from 'utils';
 import { Token } from 'models/token';
 import crypto from 'crypto';
@@ -75,6 +78,16 @@ router.get('/callback/github', async (req, res) => {
     const accessToken = await getGithubAccessToken(String(req.query.code));
     const userData = await getGithubUserDetails(accessToken);
     const user = await findOrCreateGithubUser(userData);
+
+    sendRefreshToken(res, createRefreshToken(user));
+
+    res.redirect('/');
+});
+
+router.get('/callback/google', async (req, res) => {
+    const accessToken = await getGoogleAccessToken(String(req.query.code));
+    const userData = await getGoogleUserDetails(accessToken);
+    const user = await findOrCreategoogleUser(userData);
 
     sendRefreshToken(res, createRefreshToken(user));
 

@@ -1,4 +1,7 @@
+import { navigateTo } from './navigation.js';
 import { REFRESH_TOKEN_PATH, sendRequest } from './sendRequest.js';
+
+const BASE_URL = 'http://localhost:3000';
 
 export const parseJwt = (token) =>
     JSON.parse(
@@ -15,7 +18,7 @@ export const parseJwt = (token) =>
         )
     );
 
-const login = async (request) => {
+export const setLogin = async (request) => {
     const response = await request.json();
     window.accessToken = response.token;
     showLoggedInState(response.user);
@@ -27,7 +30,7 @@ export const checkLogin = async () => {
     });
 
     if (request.ok) {
-        login(request);
+        setLogin(request);
     } else {
         showLoggedOutState();
         window.accessToken = '';
@@ -41,7 +44,7 @@ const registerLink = document.querySelector('[data-container="register"]');
 const logoutLink = document.querySelector('.logout-link');
 const profileLink = document.querySelector('[data-container="profile"]');
 
-const showLoggedInState = (user) => {
+export const showLoggedInState = (user) => {
     loginLink.style.display = 'none';
     registerLink.style.display = 'none';
     logoutLink.style.display = 'block';
@@ -50,7 +53,7 @@ const showLoggedInState = (user) => {
     profileLink.style.display = 'block';
 };
 
-const showLoggedOutState = () => {
+export const showLoggedOutState = () => {
     loginLink.style.display = 'block';
     registerLink.style.display = 'block';
     logoutLink.style.display = 'none';
@@ -59,12 +62,16 @@ const showLoggedOutState = () => {
     profileLink.style.display = 'none';
 };
 
-logoutLink.addEventListener('click', async () => {
+logoutLink.addEventListener('click', async (event) => {
+    event.preventDefault();
     await sendRequest('/api/auth/logout', {
         method: 'POST',
     });
 
-    navigateTo('create');
+    navigateTo('');
     showLoggedOutState();
     window.accessToken = '';
 });
+
+export const getRedirectUri = (provider) =>
+    `${BASE_URL}/api/auth/callback/${provider}`;
