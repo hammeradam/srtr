@@ -3,6 +3,8 @@ import { REFRESH_TOKEN_PATH, sendRequest } from './sendRequest.js';
 
 const BASE_URL = 'http://localhost:3000';
 const GITHUB_CLIENT_ID = '9fd26d2f35d5520e4f3a';
+const GOOGLE_CLIENT_ID =
+    '697090043703-5v8qd9p8efre0pdfo6s2c2ci5k9pld16.apps.googleusercontent.com';
 
 export const parseJwt = (token) =>
     JSON.parse(
@@ -74,10 +76,23 @@ logoutLink.addEventListener('click', async (event) => {
     window.accessToken = '';
 });
 
-export const getGithubAuthUrl = () =>
-    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${getRedirectUri(
-        'github'
-    )}`;
-
-export const getRedirectUri = (provider) =>
+const getRedirectUri = (provider) =>
     `${BASE_URL}/api/auth/callback/${provider}`;
+
+export const getGithubAuthUrl = () => {
+    const url = new URL('https://github.com/login/oauth/authorize');
+    url.searchParams.append('client_id', GITHUB_CLIENT_ID);
+    url.searchParams.append('redirect_uri', getRedirectUri('github'));
+
+    return url.href;
+};
+
+export const getGoogleAuthUrl = () => {
+    const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    url.searchParams.append('client_id', GOOGLE_CLIENT_ID);
+    url.searchParams.append('redirect_uri', getRedirectUri('google'));
+    url.searchParams.append('scope', 'openid email profile');
+    url.searchParams.append('response_type', 'code');
+
+    return url.href;
+};

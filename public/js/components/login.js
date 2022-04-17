@@ -5,7 +5,7 @@ import { createElement } from '../utils/createElement.js';
 import { inputGroup } from './inputGroup.js';
 import {
     getGithubAuthUrl,
-    getRedirectUri,
+    getGoogleAuthUrl,
     setLogin,
 } from '../utils/authentication.js';
 
@@ -96,9 +96,7 @@ export const login = () => {
             createElement('a', {
                 text: 'login with google',
                 classList: ['btn'],
-                href: `https://accounts.google.com/o/oauth2/v2/auth?scope=openid%20email%20profile&response_type=code&redirect_uri=${getRedirectUri(
-                    'github'
-                )}&client_id=697090043703-5v8qd9p8efre0pdfo6s2c2ci5k9pld16.apps.googleusercontent.com`,
+                href: getGoogleAuthUrl(),
             }),
         ],
         events: {
