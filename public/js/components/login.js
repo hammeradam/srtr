@@ -3,7 +3,11 @@ import { navigateTo } from '../utils/navigation.js';
 import { createFormValidator, email, required } from '../utils/validation.js';
 import { createElement } from '../utils/createElement.js';
 import { inputGroup } from './inputGroup.js';
-import { getRedirectUri, setLogin } from '../utils/authentication.js';
+import {
+    getGithubAuthUrl,
+    getRedirectUri,
+    setLogin,
+} from '../utils/authentication.js';
 
 export const login = () => {
     const inputs = [
@@ -87,9 +91,7 @@ export const login = () => {
             createElement('a', {
                 text: 'login with github',
                 classList: ['btn'],
-                href: `https://github.com/login/oauth/authorize?client_id=9fd26d2f35d5520e4f3a&redirect_uri=${getRedirectUri(
-                    'github'
-                )}`,
+                href: getGithubAuthUrl(),
             }),
             createElement('a', {
                 text: 'login with google',

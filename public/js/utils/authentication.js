@@ -2,6 +2,7 @@ import { navigateTo } from './navigation.js';
 import { REFRESH_TOKEN_PATH, sendRequest } from './sendRequest.js';
 
 const BASE_URL = 'http://localhost:3000';
+const GITHUB_CLIENT_ID = '9fd26d2f35d5520e4f3a';
 
 export const parseJwt = (token) =>
     JSON.parse(
@@ -72,6 +73,11 @@ logoutLink.addEventListener('click', async (event) => {
     showLoggedOutState();
     window.accessToken = '';
 });
+
+export const getGithubAuthUrl = () =>
+    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${getRedirectUri(
+        'github'
+    )}`;
 
 export const getRedirectUri = (provider) =>
     `${BASE_URL}/api/auth/callback/${provider}`;
