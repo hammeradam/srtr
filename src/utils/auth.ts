@@ -64,7 +64,8 @@ export const getGoogleAccessToken = async (code: string) => {
 
         return response.data.access_token;
     } catch (error) {
-        console.log(error);
+        // @ts-ignore
+        console.log(error.response);
     }
 };
 
@@ -78,11 +79,16 @@ export const getGoogleUserDetails = async (accessToken: string) => {
 
         return response.data;
     } catch (error) {
-        console.log(error);
+        // @ts-ignore
+        console.log(error.response);
     }
 };
 
 export const findOrCreategoogleUser = async (googleData: any) => {
+    if (!googleData?.id) {
+        return null;
+    }
+
     const user = await User.findOne({ googleId: googleData.id });
 
     if (user) {

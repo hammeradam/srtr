@@ -86,10 +86,15 @@ router.get('/callback/github', async (req, res) => {
 
 router.get('/callback/google', async (req, res) => {
     const accessToken = await getGoogleAccessToken(String(req.query.code));
+    console.log({ accessToken });
     const userData = await getGoogleUserDetails(accessToken);
+    console.log({ userData });
     const user = await findOrCreategoogleUser(userData);
+    console.log({ user });
 
-    sendRefreshToken(res, createRefreshToken(user));
+    if (user) {
+        sendRefreshToken(res, createRefreshToken(user));
+    }
 
     res.redirect('/');
 });
