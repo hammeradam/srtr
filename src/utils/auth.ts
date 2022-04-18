@@ -65,12 +65,17 @@ export const getGoogleAccessToken = async (code: string): Promise<string> => {
 };
 
 export const getGoogleUserDetails = async (accessToken: string) => {
-    const response = await axios.get(GOOGLE_USER_URL, {
-        headers: {
-            Authorization: 'Bearer ' + accessToken,
-        },
-    });
-    return response.data;
+    try {
+        const response = await axios.get(GOOGLE_USER_URL, {
+            headers: {
+                Authorization: 'Bearer ' + accessToken,
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 export const findOrCreategoogleUser = async (googleData: any) => {
