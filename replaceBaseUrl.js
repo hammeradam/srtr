@@ -5,7 +5,7 @@ fs.readFile(
     'utf8',
     function (err, data) {
         const result = data
-            .replace(/(BASE_URL = ')[^']+/, '$1' + 'https://srtr.herokuapp.com')
+            .replace(/(BASE_URL = ')[^']+/, '$1' + process.env.BASE_URL)
             .replace(
                 /(GITHUB_CLIENT_ID = ')[^']+/,
                 '$1' + process.env.GITHUB_CLIENT_ID

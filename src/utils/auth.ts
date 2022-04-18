@@ -10,6 +10,9 @@ export const GITHUB_USER_URL = 'https://api.github.com/user';
 export const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 export const GOOGLE_USER_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
+const getRedirectUri = (provider: string) =>
+    `${process.env.BASE_URL}/api/auth/callback/${provider}`;
+
 export const createAccessToken = (user) => {
     return jwt.sign(
         { userId: user._id, email: user.email },
@@ -52,7 +55,7 @@ export const getGoogleAccessToken = async (code: string) => {
             client_id: process.env.GOOGLE_CLIENT_ID,
             client_secret: process.env.GOOGLE_CLIENT_SECRET,
             grant_type: 'authorization_code',
-            redirect_uri: 'http://localhost:3000/api/auth/callback/google',
+            redirect_uri: getRedirectUri('google'),
             code,
         });
 

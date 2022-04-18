@@ -144,7 +144,6 @@ router.post('/forgotten-password', async (req, res) => {
     });
 
     if (user?.email) {
-        // TODO: send pw reset email
         await Token.deleteMany({ user: user._id });
 
         const token = crypto.randomBytes(32).toString('hex');

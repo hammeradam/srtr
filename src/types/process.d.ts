@@ -4,6 +4,8 @@ declare namespace NodeJS {
         DB_USER: string;
         DB_NAME: string;
 
+        BASE_URL: string;
+
         TOKEN_SECRET: string;
         SESSION_SECRET: string;
 
