@@ -46,22 +46,26 @@ export const clearRefreshToken = (res: Response) => {
     });
 };
 
-export const getGoogleAccessToken = async (code: string): Promise<string> => {
-    const params = new URLSearchParams({
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        redirect_uri: 'http://localhost:3000/api/auth/callback/google',
-        code,
-    });
+export const getGoogleAccessToken = async (code: string) => {
+    try {
+        const params = new URLSearchParams({
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            grant_type: 'authorization_code',
+            redirect_uri: 'http://localhost:3000/api/auth/callback/google',
+            code,
+        });
 
-    const response = await axios.post(GOOGLE_TOKEN_URL, params.toString(), {
-        headers: {
-            Accept: 'application/x-www-form-urlencoded',
-        },
-    });
+        const response = await axios.post(GOOGLE_TOKEN_URL, params.toString(), {
+            headers: {
+                Accept: 'application/x-www-form-urlencoded',
+            },
+        });
 
-    return response.data.access_token;
+        return response.data.access_token;
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 export const getGoogleUserDetails = async (accessToken: string) => {
