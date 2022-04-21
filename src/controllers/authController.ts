@@ -86,11 +86,11 @@ router.post('/login/email', async (req, res) => {
     const user = await findOrCreateByEmail(email);
 
     const token = crypto.randomBytes(32).toString('hex');
-
-    console.log(
-        `http://localhost:3000/api/auth/callback/email?token=${token}&userId=${user._id}`
+    const url = new URL(
+        `/api/auth/callback/email?token=${token}&userId=${user._id}`,
+        process.env.BASE_URL
     );
-    console.log(user.email);
+
     await sendMail(
         [user.email!],
         'forgotten password',
@@ -98,7 +98,7 @@ router.post('/login/email', async (req, res) => {
             'login',
             'you can log in by clicking the link below',
             'login',
-            `http://localhost:3000/api/auth/callback/email?token=${token}&userId=${user._id}`
+            url.href
         )
     );
 
@@ -154,11 +154,8 @@ router.get('/callback/github', async (req, res) => {
 
 router.get('/callback/google', async (req, res) => {
     const accessToken = await getGoogleAccessToken(String(req.query.code));
-    console.log({ accessToken });
     const userData = await getGoogleUserDetails(accessToken);
-    console.log({ userData });
     const user = await findOrCreategoogleUser(userData);
-    console.log({ user });
 
     if (user) {
         sendRefreshToken(res, createRefreshToken(user));
@@ -218,9 +215,9 @@ router.post('/forgotten-password', async (req, res) => {
         });
 
         const token = crypto.randomBytes(32).toString('hex');
-
-        console.log(
-            `http://localhost:3000/reset-password?token=${token}&userId=${user._id}`
+        const url = new URL(
+            `/reset-password?token=${token}&userId=${user._id}`,
+            process.env.BASE_URL
         );
 
         await sendMail(
@@ -230,7 +227,7 @@ router.post('/forgotten-password', async (req, res) => {
                 'forgotten password',
                 'you can reset your password by clicking the link below',
                 'reset password',
-                `http://localhost:3000/reset-password?token=${token}&userId=${user._id}`
+                url.href
             )
         );
 

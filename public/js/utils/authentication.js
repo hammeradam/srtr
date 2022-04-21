@@ -44,23 +44,29 @@ export const checkLogin = async () => {
 checkLogin();
 
 export const showLoggedInState = (user) => {
-    document.querySelector('[href="/login"]').style.display = 'none';
-    document.querySelector('[href="/register"]').style.display = 'none';
-    document.querySelector('[href="/logout"]').style.display = 'block';
+    document.querySelector('[href="/login"]').parentElement.style.display =
+        'none';
+    document.querySelector('[href="/register"]').parentElement.style.display =
+        'none';
+    document.querySelector('[href="/logout"]').parentElement.style.display =
+        'block';
 
     const profileLink = document.querySelector('[href="/profile"]');
     profileLink.innerHTML = user;
-    profileLink.style.display = 'block';
+    profileLink.parentElement.style.display = 'block';
 };
 
 export const showLoggedOutState = () => {
-    document.querySelector('[href="/login"]').style.display = 'block';
-    document.querySelector('[href="/register"]').style.display = 'block';
-    document.querySelector('[href="/logout"]').style.display = 'none';
+    document.querySelector('[href="/login"]').parentElement.style.display =
+        'block';
+    document.querySelector('[href="/register"]').parentElement.style.display =
+        'block';
+    document.querySelector('[href="/logout"]').parentElement.style.display =
+        'none';
 
     const profileLink = document.querySelector('[href="/profile"]');
     profileLink.innerHTML = '';
-    profileLink.style.display = 'none';
+    profileLink.parentElement.style.display = 'none';
 };
 
 const getRedirectUri = (provider) =>

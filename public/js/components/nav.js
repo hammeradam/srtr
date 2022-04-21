@@ -1,4 +1,5 @@
 import { createElement } from '../utils/createElement.js';
+import { logout } from './logout.js';
 import { navItem } from './navItem.js';
 import { themeToggle } from './themeToggle.js';
 
@@ -22,7 +23,7 @@ export const nav = () => {
                                     navItem('/profile', ''),
                                     navItem('/login', 'LOGIN'),
                                     navItem('/register', 'REGISTER'),
-                                    navItem('/logout', 'LOGOUT'),
+                                    logout(),
                                 ],
                             }),
                         ],
