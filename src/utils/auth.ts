@@ -151,3 +151,17 @@ export const findOrCreateGithubUser = async (githubData: any) => {
 
     return newUser;
 };
+
+export const findOrCreateByEmail = async (email: string) => {
+    const user = await User.findOne({ email });
+
+    if (user) {
+        return user;
+    }
+
+    const newUser = await User.create({
+        email,
+    });
+
+    return newUser;
+};

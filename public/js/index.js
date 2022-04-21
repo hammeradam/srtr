@@ -1,4 +1,9 @@
-import './utils/theme.js';
-import './utils/navigation.js';
+import './components/router.js';
 import './utils/authentication.js';
-import './utils/notifications.js';
+import { app } from './components/app.js';
+
+(() => {
+    const root = document.querySelector('body');
+
+    root.appendChild(app());
+})();

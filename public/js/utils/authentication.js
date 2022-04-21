@@ -1,4 +1,3 @@
-import { navigateTo } from './navigation.js';
 import { REFRESH_TOKEN_PATH, sendRequest } from './sendRequest.js';
 
 // prettier-ignore
@@ -35,48 +34,34 @@ export const checkLogin = async () => {
     });
 
     if (request.ok) {
-        setLogin(request);
-    } else {
-        showLoggedOutState();
-        window.accessToken = '';
+        return setLogin(request);
     }
+
+    showLoggedOutState();
+    window.accessToken = '';
 };
 
 checkLogin();
 
-const loginLink = document.querySelector('[data-container="login"]');
-const registerLink = document.querySelector('[data-container="register"]');
-const logoutLink = document.querySelector('.logout-link');
-const profileLink = document.querySelector('[data-container="profile"]');
-
 export const showLoggedInState = (user) => {
-    loginLink.style.display = 'none';
-    registerLink.style.display = 'none';
-    logoutLink.style.display = 'block';
+    document.querySelector('[href="/login"]').style.display = 'none';
+    document.querySelector('[href="/register"]').style.display = 'none';
+    document.querySelector('[href="/logout"]').style.display = 'block';
 
+    const profileLink = document.querySelector('[href="/profile"]');
     profileLink.innerHTML = user;
     profileLink.style.display = 'block';
 };
 
 export const showLoggedOutState = () => {
-    loginLink.style.display = 'block';
-    registerLink.style.display = 'block';
-    logoutLink.style.display = 'none';
+    document.querySelector('[href="/login"]').style.display = 'block';
+    document.querySelector('[href="/register"]').style.display = 'block';
+    document.querySelector('[href="/logout"]').style.display = 'none';
 
+    const profileLink = document.querySelector('[href="/profile"]');
     profileLink.innerHTML = '';
     profileLink.style.display = 'none';
 };
-
-logoutLink.addEventListener('click', async (event) => {
-    event.preventDefault();
-    await sendRequest('/api/auth/logout', {
-        method: 'POST',
-    });
-
-    navigateTo('');
-    showLoggedOutState();
-    window.accessToken = '';
-});
 
 const getRedirectUri = (provider) =>
     `${BASE_URL}/api/auth/callback/${provider}`;

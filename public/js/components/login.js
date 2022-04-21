@@ -1,5 +1,5 @@
 import { sendRequest } from '../utils/sendRequest.js';
-import { navigateTo } from '../utils/navigation.js';
+import { navigateTo } from '../components/./router.js';
 import { createFormValidator, email, required } from '../utils/validation.js';
 import { createElement } from '../utils/createElement.js';
 import { inputGroup } from './inputGroup.js';
@@ -88,6 +88,17 @@ export const login = () => {
             }),
             createElement('button', { text: 'login', classList: ['btn'] }),
             createElement('hr'),
+            createElement('a', {
+                text: 'login with magic link',
+                classList: ['btn'],
+                href: '/magic-login',
+                events: {
+                    click: (event) => {
+                        event.preventDefault();
+                        navigateTo('magic-login');
+                    },
+                },
+            }),
             createElement('a', {
                 text: 'login with github',
                 classList: ['btn'],

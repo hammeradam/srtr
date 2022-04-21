@@ -1,36 +1,22 @@
-import { navigateTo } from '../components/./router.js';
 import { sendRequest } from '../utils/sendRequest.js';
+import { navigateTo } from '../components/./router.js';
+import { createFormValidator, email, required } from '../utils/validation.js';
 import { createElement } from '../utils/createElement.js';
-import {
-    createFormValidator,
-    email,
-    errors,
-    required,
-} from '../utils/validation.js';
 import { inputGroup } from './inputGroup.js';
-import { setLogin } from '../utils/authentication.js';
+import { success } from '../utils/notifications.js';
 
-export const register = () => {
+export const magicLogin = () => {
     const inputs = [
         {
             name: 'email',
             rules: [
                 {
                     validator: email,
-                    errorMessage: errors.email_invalid,
+                    errorMessage: 'invalid email',
                 },
                 {
                     validator: required,
-                    errorMessage: errors.email_required,
-                },
-            ],
-        },
-        {
-            name: 'password',
-            rules: [
-                {
-                    validator: required,
-                    errorMessage: 'password is required',
+                    errorMessage: 'email is required',
                 },
             ],
         },
@@ -43,7 +29,7 @@ export const register = () => {
             return;
         }
 
-        const request = await sendRequest('/api/auth/register', {
+        const request = await sendRequest('/api/auth/login/email', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,29 +40,24 @@ export const register = () => {
         });
 
         if (request.ok) {
-            setLogin(request);
-            navigateTo('');
+            success({
+                content: "we've sent you an email to log in with",
+            });
         }
     };
 
     return createElement('form', {
-        id: 'register-form',
-        classList: ['register-container'],
+        id: 'login-form',
+        classList: ['login-container'],
         children: [
-            createElement('h1', { text: 'register' }),
+            createElement('h1', { text: 'login' }),
             inputGroup({
                 name: 'email',
                 type: 'email',
-                id: 'register-email',
+                id: 'login-email',
                 label: 'email',
             }),
-            inputGroup({
-                name: 'password',
-                type: 'password',
-                id: 'register-password',
-                label: 'password',
-            }),
-            createElement('button', { text: 'register', classList: ['btn'] }),
+            createElement('button', { text: 'login', classList: ['btn'] }),
         ],
         events: {
             submit,

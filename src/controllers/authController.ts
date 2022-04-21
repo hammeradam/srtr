@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { hash, compare } from 'bcrypt';
-import { User } from 'models';
+import { User, Token, TokenType } from 'models';
 import {
     clearRefreshToken,
     createAccessToken,
@@ -16,9 +16,11 @@ import {
     getGoogleAccessToken,
     getGoogleUserDetails,
     findOrCreategoogleUser,
+    findOrCreateByEmail,
+    sendHtml,
 } from 'utils';
-import { Token } from 'models/token';
 import crypto from 'crypto';
+import { loggedOutMiddleware } from 'middleware';
 
 const router = express.Router();
 
@@ -72,6 +74,72 @@ router.post('/login', async (req, res) => {
         token,
         user: user.name || user.email,
     });
+});
+
+router.post('/login/email', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).send('All input is required');
+    }
+
+    const user = await findOrCreateByEmail(email);
+
+    const token = crypto.randomBytes(32).toString('hex');
+
+    console.log(
+        `http://localhost:3000/api/auth/callback/email?token=${token}&userId=${user._id}`
+    );
+    console.log(user.email);
+    await sendMail(
+        [user.email!],
+        'forgotten password',
+        buildMailHtml(
+            'login',
+            'you can log in by clicking the link below',
+            'login',
+            `http://localhost:3000/api/auth/callback/email?token=${token}&userId=${user._id}`
+        )
+    );
+
+    const hashedToken = await hash(token, 10);
+
+    new Token({
+        token: hashedToken,
+        user: user._id,
+        type: TokenType['login'],
+    }).save();
+
+    res.end();
+});
+
+router.get('/callback/email', loggedOutMiddleware, async (req, res) => {
+    const { token, userId } = req.query;
+
+    if (!token || !userId) {
+        return sendHtml(res, '400', 400);
+    }
+
+    const dbToken = await Token.findOne({
+        user: userId,
+        type: TokenType['login'],
+    });
+
+    if (!dbToken || !compare(token.toString(), dbToken.token)) {
+        return sendHtml(res, '400', 400);
+    }
+
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+        return sendHtml(res, '400', 400);
+    }
+
+    await Token.deleteMany({ user: userId, type: TokenType['login'] });
+
+    sendRefreshToken(res, createRefreshToken(user));
+
+    res.redirect('/');
 });
 
 router.get('/callback/github', async (req, res) => {
@@ -144,7 +212,10 @@ router.post('/forgotten-password', async (req, res) => {
     });
 
     if (user?.email) {
-        await Token.deleteMany({ user: user._id });
+        await Token.deleteMany({
+            user: user._id,
+            type: TokenType['reset-password'],
+        });
 
         const token = crypto.randomBytes(32).toString('hex');
 
@@ -167,6 +238,7 @@ router.post('/forgotten-password', async (req, res) => {
         new Token({
             token: hashedToken,
             user: user._id,
+            type: TokenType['reset-password'],
         }).save();
     }
 
@@ -177,6 +249,7 @@ router.post('/reset-password', async (req, res) => {
     const { token, userId, password, passwordConfirm } = req.body;
     const dbToken = await Token.findOne({
         user: userId,
+        type: TokenType['reset-password'],
     });
 
     if (password !== passwordConfirm) {
@@ -199,7 +272,7 @@ router.post('/reset-password', async (req, res) => {
         password: await hash(password, 10),
     });
 
-    await Token.deleteMany({ user: userId });
+    await Token.deleteMany({ user: userId, type: TokenType['reset-password'] });
 
     const newToken = createAccessToken(user);
     sendRefreshToken(res, createRefreshToken(user));
@@ -207,9 +280,7 @@ router.post('/reset-password', async (req, res) => {
     res.json({
         token: newToken,
         user: user.name || user.email,
-    });
-
-    res.end();
+    }).end();
 });
 
 export default router;
