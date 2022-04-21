@@ -6,3 +6,4 @@ export * from './registerMiddleware';
 export * from './sendHtml';
 export * from './validateLink';
 export * from './mail';
+export * from './selfPing';

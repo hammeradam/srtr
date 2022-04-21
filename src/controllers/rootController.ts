@@ -1,5 +1,4 @@
 import express from 'express';
-import { authMiddleware } from 'middleware';
 import { Link } from 'models';
 import { sendHtml } from 'utils';
 
@@ -22,7 +21,7 @@ router.get('/l/:name', async (req, res) => {
     res.redirect(link.url);
 });
 
-router.get('/ping', authMiddleware, (_, res) => res.send('pong'));
+router.get('/ping', (_, res) => res.send('pong'));
 
 router.get('*', (_, res) => sendHtml(res, 'index'));
 
