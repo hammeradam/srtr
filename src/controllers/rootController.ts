@@ -33,6 +33,6 @@ router.get('/l/:name', async (req, res) => {
 
 router.get('/ping', (_, res) => res.send('pong'));
 
-router.get('*', (_, res) => sendHtml(res, 'index'));
+router.get('/(.*)', (_, res) => sendHtml(res, 'index'));
 
 export default router;

@@ -1,5 +1,5 @@
 import express from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 import { hash, compare } from 'bcrypt';
 import {
     clearRefreshToken,
@@ -21,6 +21,7 @@ import {
 import crypto from 'crypto';
 import { loggedOutMiddleware } from 'middleware';
 import prisma from 'prisma';
+import { ApplicationError } from 'errors';
 
 const router = express.Router();
 
@@ -169,37 +170,24 @@ router.get('/callback/google', async (req, res) => {
 
 router.post('/refresh_token', async (req, res) => {
     const token = req.cookies[COOKIE_NAME];
+    const payload = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    if (!token) {
-        return res.status(401).json({ error: 'missing_refresh_token' });
+    const user = await prisma.user.findFirst({
+        where: {
+            id: (payload as JwtPayload).userId,
+        },
+    });
+
+    if (!user || user.tokenVersion !== (payload as JwtPayload).tokenVersion) {
+        throw new ApplicationError('missing_refresh_token', 401);
     }
 
-    try {
-        const payload = jwt.verify(token, process.env.TOKEN_SECRET);
-        const user = await prisma.user.findFirst({
-            where: {
-                id: (payload as JwtPayload).userId,
-            },
-        });
+    sendRefreshToken(res, createRefreshToken(user));
 
-        if (
-            !user ||
-            user.tokenVersion !== (payload as JwtPayload).tokenVersion
-        ) {
-            return res.status(401).json({ error: 'invalid_refresh_token' });
-        }
-
-        sendRefreshToken(res, createRefreshToken(user));
-
-        return res.json({
-            token: createAccessToken(user),
-            user: user.name || user.email,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(400);
-        return res.json({ error: 'invalid_refresh_token' });
-    }
+    return res.json({
+        token: createAccessToken(user),
+        user: user.name || user.email,
+    });
 });
 
 router.post('/logout', (_req, res) => {

@@ -1,11 +1,17 @@
 import express from 'express';
 import 'dotenv/config';
-import { registerControllers, registerMiddleware, selfPing } from 'utils';
+import {
+    registerControllers,
+    registerErrorHandling,
+    registerMiddleware,
+    selfPing,
+} from 'utils';
 
 const app = express();
 
 registerMiddleware(app);
 registerControllers(app);
+registerErrorHandling(app);
 
 app.listen(process.env.PORT || 3000, () => {
     console.info('The application is listening on port 3000!');
