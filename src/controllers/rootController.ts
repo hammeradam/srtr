@@ -1,17 +1,27 @@
 import express from 'express';
-import { Link } from 'models';
+import prisma from 'prisma';
 import { sendHtml } from 'utils';
 
 const router = express.Router();
 
 router.get('/l/:name', async (req, res) => {
-    const link = await Link.findOne({ name: req.params.name });
+    const link = await prisma.link.findFirst({
+        where: { name: req.params.name },
+    });
+
     if (!link || (link.limit && link.limit <= link.hitCount)) {
         res.status(404);
         return sendHtml(res, '404', 404);
     }
 
-    await link.updateOne({ hitCount: ++link.hitCount });
+    await prisma.link.updateMany({
+        where: { name: req.params.name },
+        data: {
+            hitCount: {
+                increment: 1,
+            },
+        },
+    });
 
     if (link.password) {
         req.session.name = link.name;

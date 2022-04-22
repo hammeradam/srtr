@@ -1,9 +1,9 @@
 import crypto from 'crypto';
-import { Link } from 'models';
+import prisma from 'prisma';
 
 export const generateName = async (length = 2): Promise<string> => {
     const name = crypto.randomBytes(length).toString('hex');
-    if (await Link.exists({ name })) {
+    if (await prisma.link.findFirst({ where: { name } })) {
         return generateName();
     }
 

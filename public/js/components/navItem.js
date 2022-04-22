@@ -13,8 +13,9 @@ const onLinkClicked = (event) => {
     navigateTo(url.pathname.substring(1));
 };
 
-export const navItem = (href, label) => {
+export const navItem = (href, label, options) => {
     return createElement('li', {
+        ...options,
         children: [
             createElement('a', {
                 href,

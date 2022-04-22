@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Link } from 'models';
+import prisma from 'prisma';
 
 const validateUrl = (string: string) => {
     try {
@@ -31,7 +31,7 @@ export const validateLink = async (req: Request, res: Response) => {
         });
     }
 
-    if (name && (await Link.exists({ name }))) {
+    if (name && (await prisma.link.findFirst({ where: { name } }))) {
         res.status(400);
         return res.json({
             error: 'name_taken',

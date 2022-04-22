@@ -1,13 +1,6 @@
 import express from 'express';
 import 'dotenv/config';
-import {
-    connectToMongoDB,
-    registerControllers,
-    registerMiddleware,
-    selfPing,
-} from 'utils';
-
-connectToMongoDB();
+import { registerControllers, registerMiddleware, selfPing } from 'utils';
 
 const app = express();
 

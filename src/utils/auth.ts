@@ -1,8 +1,8 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
-import { User } from 'models';
 import { URLSearchParams } from 'url';
+import prisma from 'prisma';
 
 export const COOKIE_NAME = 'jid';
 export const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
@@ -15,7 +15,7 @@ const getRedirectUri = (provider: string) =>
 
 export const createAccessToken = (user) => {
     return jwt.sign(
-        { userId: user._id, email: user.email },
+        { userId: user.id, email: user.email },
         process.env.TOKEN_SECRET,
         {
             expiresIn: '1h',
@@ -25,7 +25,7 @@ export const createAccessToken = (user) => {
 
 export const createRefreshToken = (user) => {
     return jwt.sign(
-        { userId: user._id, tokenVersion: user.tokenVersion },
+        { userId: user.id, tokenVersion: user.tokenVersion },
         process.env.TOKEN_SECRET,
         {
             expiresIn: '7d',
@@ -92,16 +92,20 @@ export const findOrCreategoogleUser = async (googleData: any) => {
         return null;
     }
 
-    const user = await User.findOne({ googleId: googleData.id });
+    const user = await prisma.user.findFirst({
+        where: { googleId: googleData.id },
+    });
 
     if (user) {
         return user;
     }
 
-    const newUser = await User.create({
-        googleId: googleData.id,
-        name: googleData.name,
-        email: googleData.email,
+    const newUser = await prisma.user.create({
+        data: {
+            googleId: googleData.id,
+            name: googleData.name,
+            email: googleData.email,
+        },
     });
 
     return newUser;
@@ -137,30 +141,36 @@ export const getGithubUserDetails = async (accessToken: string) => {
 };
 
 export const findOrCreateGithubUser = async (githubData: any) => {
-    const user = await User.findOne({ githubId: githubData.id });
+    const user = await prisma.user.findFirst({
+        where: { githubId: githubData.id },
+    });
 
     if (user) {
         return user;
     }
 
-    const newUser = await User.create({
-        githubId: githubData.id,
-        name: githubData.login,
-        email: githubData?.email,
+    const newUser = await prisma.user.create({
+        data: {
+            githubId: githubData.id,
+            name: githubData.login,
+            email: githubData?.email,
+        },
     });
 
     return newUser;
 };
 
 export const findOrCreateByEmail = async (email: string) => {
-    const user = await User.findOne({ email });
+    const user = await prisma.user.findFirst({ where: { email } });
 
     if (user) {
         return user;
     }
 
-    const newUser = await User.create({
-        email,
+    const newUser = await prisma.user.create({
+        data: {
+            email,
+        },
     });
 
     return newUser;

@@ -1,8 +1,8 @@
 import express, { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { hash, compare } from 'bcrypt';
-import { User, Link } from 'models';
 import { validateLink, generateName, sendHtml } from 'utils';
+import prisma from 'prisma';
 
 const router = express.Router();
 
@@ -14,9 +14,12 @@ const getUser = async (req: Request) => {
     }
 
     const payload = jwt.verify(token ?? '', process.env.TOKEN_SECRET);
-    const user = await User.findOne({
-        _id: (payload as JwtPayload).userId,
-    }).populate('links');
+    const user = await prisma.user.findFirst({
+        where: { id: (payload as JwtPayload).userId },
+        include: {
+            links: true,
+        },
+    });
 
     return user;
 };
@@ -28,40 +31,37 @@ router.post('/', async (req, res) => {
     }
 
     const user = await getUser(req);
-
     const name = req.body.name || (await generateName());
 
-    const link = await Link.create({
-        name,
-        url: req.body.url,
-        hitCount: 0,
-        password:
-            req.body.password && req.body.password.length
-                ? await hash(req.body.password, 10)
-                : null,
-        limit: req.body.limit,
-        user: user ? user._id : null,
+    const link = await prisma.link.create({
+        data: {
+            name,
+            url: req.body.url,
+            password:
+                req.body.password && req.body.password.length
+                    ? await hash(req.body.password, 10)
+                    : undefined,
+            limit: req.body.limit || undefined,
+            userId: user?.id,
+        },
     });
-
-    if (user) {
-        user.links.push(link._id);
-        await user.save();
-    }
 
     res.json({
         name,
-        url: req.body.url,
+        url: link.url,
     });
 });
 
 // GET ALL
 router.get('/', async (_req, res) =>
     res.json(
-        (await Link.find()).map((link) => ({
-            url: link.url,
-            name: link.name,
-            hitCount: link.hitCount,
-        }))
+        await prisma.link.findMany({
+            select: {
+                url: true,
+                name: true,
+                hitCount: true,
+            },
+        })
     )
 );
 
@@ -74,14 +74,14 @@ router.post('/password', async (req, res) => {
         return sendHtml(res, '400', 400);
     }
 
-    const link = await Link.findOne({ name });
+    const link = await prisma.link.findFirst({ where: { name } });
     if (!link) {
         return sendHtml(res, '404', 404);
     }
 
     req.session.destroy(() => {});
 
-    if (!(await compare(password, link.password))) {
+    if (!(await compare(password, link.password || ''))) {
         return sendHtml(res, '400', 400);
     }
 
@@ -111,7 +111,7 @@ router.get('/:name', async (req, res) => {
         });
     }
 
-    const link = await Link.findOne({ name });
+    const link = await prisma.link.findFirst({ where: { name } });
 
     if (!link) {
         res.status(404);

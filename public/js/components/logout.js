@@ -5,6 +5,7 @@ import { navigateTo } from './router.js';
 
 export const logout = () => {
     return createElement('li', {
+        style: 'display: none;',
         children: [
             createElement('a', {
                 href: '/logout',
