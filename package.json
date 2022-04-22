@@ -6,8 +6,7 @@
     "scripts": {
         "dev": "nodemon",
         "start": "ts-node --files -r tsconfig-paths/register ./src/index.ts",
-        "build": "prisma generate",
-        "heroku-postbuild": "node replaceBaseUrl.js",
+        "heroku-postbuild": "prisma generate && node replaceBaseUrl.js",
         "prettier": "prettier ./src --write",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
