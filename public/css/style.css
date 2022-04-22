@@ -127,8 +127,7 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--text);
-    color: var(--background);
+    color: var(--text);
 }
 
 .dot {
@@ -182,7 +181,7 @@ footer {
         background-color: var(--background);
         border-top: 5px solid var(--accent);
         transform: translateY(100%);
-        transition: cubic-bezier(0, 0.06, 0.5, 1.39) 0.5s;
+        transition: transform cubic-bezier(0, 0.06, 0.5, 1.39) 0.5s;
     }
 
     nav ul {
