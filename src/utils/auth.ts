@@ -50,41 +50,31 @@ export const clearRefreshToken = (res: Response) => {
 };
 
 export const getGoogleAccessToken = async (code: string) => {
-    try {
-        const params = new URLSearchParams({
-            client_id: process.env.GOOGLE_CLIENT_ID,
-            client_secret: process.env.GOOGLE_CLIENT_SECRET,
-            grant_type: 'authorization_code',
-            redirect_uri: getRedirectUri('google'),
-            code,
-        });
+    const params = new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: getRedirectUri('google'),
+        code,
+    });
 
-        const response = await axios.post(GOOGLE_TOKEN_URL, params.toString(), {
-            headers: {
-                Accept: 'application/x-www-form-urlencoded',
-            },
-        });
+    const response = await axios.post(GOOGLE_TOKEN_URL, params.toString(), {
+        headers: {
+            Accept: 'application/x-www-form-urlencoded',
+        },
+    });
 
-        return response.data.access_token;
-    } catch (error) {
-        // @ts-ignore
-        console.log(error.response);
-    }
+    return response.data.access_token;
 };
 
 export const getGoogleUserDetails = async (accessToken: string) => {
-    try {
-        const response = await axios.get(GOOGLE_USER_URL, {
-            headers: {
-                Authorization: 'Bearer ' + accessToken,
-            },
-        });
+    const response = await axios.get(GOOGLE_USER_URL, {
+        headers: {
+            Authorization: 'Bearer ' + accessToken,
+        },
+    });
 
-        return response.data;
-    } catch (error) {
-        // @ts-ignore
-        console.log(error.response);
-    }
+    return response.data;
 };
 
 export const findOrCreategoogleUser = async (googleData: any) => {
