@@ -121,6 +121,10 @@ nav ul li a {
     text-decoration: none;
 }
 
+.nav-separator {
+    margin-left: auto;
+}
+
 footer {
     width: 100%;
     padding: 1rem;
@@ -189,18 +193,12 @@ footer {
         align-items: center;
     }
 
-    nav .auth-links {
-        flex-direction: column;
-        align-items: center;
-        margin-left: unset;
-    }
-
     nav.open {
         transform: translateY(0);
     }
 
-    [data-container='profile'] {
-        order: 1;
+    .nav-separator {
+        display: none;
     }
 
     #darkModeToggle {
@@ -341,16 +339,6 @@ summary {
 hr {
     width: 100%;
     border-top: 2px solid var(--text);
-}
-
-.auth-links {
-    display: flex;
-    gap: 20px;
-    margin-left: auto;
-}
-
-.auth-links > [data-container='logout'] {
-    display: none;
 }
 
 #notificationContainer {

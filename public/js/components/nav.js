@@ -13,24 +13,22 @@ export const nav = () => {
                         children: [
                             navItem('/', 'HOME'),
                             navItem('/check', 'CHECK'),
-                            createElement('ul', {
-                                classList: ['auth-links'],
-                                children: [
-                                    navItem('/profile', '', {
-                                        style: 'display: none;',
-                                    }),
-                                    navItem('/login', 'LOGIN', {
-                                        style: 'display: none;',
-                                    }),
-                                    navItem('/register', 'REGISTER', {
-                                        style: 'display: none;',
-                                    }),
-                                    logout(),
-                                    createElement('li', {
-                                        id: 'darkModeToggle',
-                                        children: [themeToggle()],
-                                    }),
-                                ],
+                            createElement('li', {
+                                classList: ['nav-separator'],
+                            }),
+                            navItem('/profile', '', {
+                                style: 'display: none;',
+                            }),
+                            navItem('/login', 'LOGIN', {
+                                style: 'display: none; align',
+                            }),
+                            navItem('/register', 'REGISTER', {
+                                style: 'display: none; align',
+                            }),
+                            logout(),
+                            createElement('li', {
+                                id: 'darkModeToggle',
+                                children: [themeToggle()],
                             }),
                         ],
                     }),

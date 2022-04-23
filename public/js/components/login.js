@@ -75,10 +75,10 @@ export const login = () => {
                 id: 'login-password',
                 label: 'password',
             }),
-            createElement('button', {
+            createElement('a', {
+                href: '/forgot-password',
                 text: 'forgot password?',
                 classList: ['btn', 'forgot-password-btn'],
-                'data-container': 'forgot-password',
                 events: {
                     click: (event) => {
                         event.preventDefault();

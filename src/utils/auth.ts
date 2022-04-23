@@ -2,7 +2,7 @@ import { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
-import prisma from 'prisma';
+import prisma, { User } from 'prisma';
 
 export const COOKIE_NAME = 'jid';
 export const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
@@ -13,7 +13,7 @@ export const GOOGLE_USER_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
 const getRedirectUri = (provider: string) =>
     `${process.env.BASE_URL}/api/auth/callback/${provider}`;
 
-export const createAccessToken = (user) => {
+export const createAccessToken = (user: User) => {
     return jwt.sign(
         { userId: user.id, email: user.email },
         process.env.TOKEN_SECRET,
@@ -23,7 +23,7 @@ export const createAccessToken = (user) => {
     );
 };
 
-export const createRefreshToken = (user) => {
+export const createRefreshToken = (user: User) => {
     return jwt.sign(
         { userId: user.id, tokenVersion: user.tokenVersion },
         process.env.TOKEN_SECRET,
@@ -49,7 +49,7 @@ export const clearRefreshToken = (res: Response) => {
     });
 };
 
-export const getGoogleAccessToken = async (code: string) => {
+export const getGoogleAccessToken = async (code: string): Promise<string> => {
     const params = new URLSearchParams({
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
@@ -67,8 +67,16 @@ export const getGoogleAccessToken = async (code: string) => {
     return response.data.access_token;
 };
 
-export const getGoogleUserDetails = async (accessToken: string) => {
-    const response = await axios.get(GOOGLE_USER_URL, {
+export interface GoogleData {
+    id: string;
+    name: string;
+    email: string;
+}
+
+export const getGoogleUserDetails = async (
+    accessToken: string
+): Promise<GoogleData> => {
+    const response = await axios.get<GoogleData>(GOOGLE_USER_URL, {
         headers: {
             Authorization: 'Bearer ' + accessToken,
         },
@@ -77,13 +85,9 @@ export const getGoogleUserDetails = async (accessToken: string) => {
     return response.data;
 };
 
-export const findOrCreategoogleUser = async (googleData: any) => {
-    if (!googleData?.id) {
-        return null;
-    }
-
+export const findOrCreategoogleUser = async (data: GoogleData) => {
     const user = await prisma.user.findFirst({
-        where: { googleId: googleData.id },
+        where: { googleId: data.id },
     });
 
     if (user) {
@@ -92,9 +96,9 @@ export const findOrCreategoogleUser = async (googleData: any) => {
 
     const newUser = await prisma.user.create({
         data: {
-            googleId: googleData.id,
-            name: googleData.name,
-            email: googleData.email,
+            googleId: data.id,
+            name: data.name,
+            email: data.email,
         },
     });
 
@@ -120,8 +124,14 @@ export const getGithubAccessToken = async (code: string): Promise<string> => {
     return response.data.access_token;
 };
 
+interface GithubData {
+    id: number;
+    login: string;
+    email?: string;
+}
+
 export const getGithubUserDetails = async (accessToken: string) => {
-    const response = await axios.get(GITHUB_USER_URL, {
+    const response = await axios.get<GithubData>(GITHUB_USER_URL, {
         headers: {
             Authorization: 'token ' + accessToken,
         },
@@ -130,9 +140,9 @@ export const getGithubUserDetails = async (accessToken: string) => {
     return response.data;
 };
 
-export const findOrCreateGithubUser = async (githubData: any) => {
+export const findOrCreateGithubUser = async (data: GithubData) => {
     const user = await prisma.user.findFirst({
-        where: { githubId: githubData.id },
+        where: { githubId: data.id },
     });
 
     if (user) {
@@ -141,9 +151,9 @@ export const findOrCreateGithubUser = async (githubData: any) => {
 
     const newUser = await prisma.user.create({
         data: {
-            githubId: githubData.id,
-            name: githubData.login,
-            email: githubData?.email,
+            githubId: data.id,
+            name: data.login,
+            email: data?.email,
         },
     });
 
