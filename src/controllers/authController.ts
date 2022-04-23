@@ -16,7 +16,6 @@ import {
     getGoogleUserDetails,
     findOrCreategoogleUser,
     findOrCreateByEmail,
-    sendHtml,
 } from 'utils';
 import crypto from 'crypto';
 import { loggedOutMiddleware } from 'middleware';
@@ -119,7 +118,7 @@ router.get('/callback/email', loggedOutMiddleware, async (req, res) => {
     const { token, userId } = req.query;
 
     if (!token || !userId || typeof userId !== 'string') {
-        return sendHtml(res, '400', 400);
+        return res.redirect('/error?code=400');
     }
 
     const dbToken = await prisma.token.findFirst({
@@ -130,13 +129,13 @@ router.get('/callback/email', loggedOutMiddleware, async (req, res) => {
     });
 
     if (!dbToken || !compare(token.toString(), dbToken.content)) {
-        return sendHtml(res, '400', 400);
+        return res.redirect('/error?code=400');
     }
 
     const user = await prisma.user.findFirst({ where: { id: userId } });
 
     if (!user) {
-        return sendHtml(res, '400', 400);
+        return res.redirect('/error?code=400');
     }
 
     await prisma.token.deleteMany({ where: { userId, type: 'login' } });

@@ -8,6 +8,7 @@ import { magicLogin } from './magicLogin.js';
 import { register } from './register.js';
 import { resetPassword } from './resetPassword.js';
 import { password } from './password.js';
+import { error } from './error.js';
 
 export const navigateTo = (path, pushState = true) => {
     const main = document.querySelector('body main');
@@ -39,7 +40,7 @@ const getComponent = (path) => {
         case '':
             return create;
         default:
-            return () => createElement('div', { html: 'error' });
+            return error;
     }
 };
 

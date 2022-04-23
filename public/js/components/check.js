@@ -46,8 +46,7 @@ export const check = () => {
     };
 
     return createElement('form', {
-        id: 'check-form',
-        classList: ['check-container'],
+        classList: ['card'],
         children: [
             createElement('h1', { text: 'check' }),
             inputGroup({

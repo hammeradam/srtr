@@ -66,8 +66,7 @@ export const resetPassword = () => {
     };
 
     return createElement('form', {
-        id: 'reset-password-form',
-        classList: ['reset-password'],
+        classList: ['card'],
         children: [
             createElement('h1', { text: 'reset password' }),
             inputGroup({

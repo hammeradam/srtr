@@ -60,8 +60,7 @@ export const register = () => {
     };
 
     return createElement('form', {
-        id: 'register-form',
-        classList: ['register-container'],
+        classList: ['card'],
         children: [
             createElement('h1', { text: 'register' }),
             inputGroup({

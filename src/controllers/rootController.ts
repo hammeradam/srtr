@@ -10,8 +10,7 @@ router.get('/l/:name', async (req, res) => {
     });
 
     if (!link || (link.limit && link.limit <= link.hitCount)) {
-        res.status(404);
-        return sendHtml(res, '404', 404);
+        return res.status(404).redirect('/error?code=404');
     }
 
     await prisma.link.updateMany({

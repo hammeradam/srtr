@@ -76,7 +76,7 @@ main {
     width: min-content;
 }
 
-main > * {
+.card {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -94,6 +94,7 @@ main > * {
 nav {
     width: 100%;
     padding: 2rem;
+    padding-bottom: 0;
 }
 
 nav ul {
@@ -348,6 +349,15 @@ hr {
     gap: 1rem;
     top: 20px;
     right: 20px;
+}
+
+.error-page h1 {
+    font-size: min(200px, 40vw);
+    color: blueviolet;
+}
+
+.error-page p {
+    font-size: 30px;
 }
 
 .notification {

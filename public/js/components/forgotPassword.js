@@ -56,8 +56,7 @@ export const forgotPassword = () => {
     };
 
     return createElement('form', {
-        id: 'forgot-password-form',
-        classList: ['forgot-password-container'],
+        classList: ['card'],
         children: [
             createElement('h1', { text: 'forgot password' }),
             inputGroup({

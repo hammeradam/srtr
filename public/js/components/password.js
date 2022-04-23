@@ -3,10 +3,10 @@ import { createFormValidator, required } from '../utils/validation.js';
 import { createElement } from '../utils/createElement.js';
 import { inputGroup } from './inputGroup.js';
 import { navigateTo } from './router.js';
+import { getQueryParam } from '../utils/getQueryParam.js';
 
 export const password = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const name = urlParams.get('name');
+    const name = getQueryParam('name');
 
     if (!name) {
         return navigateTo('error');
@@ -50,8 +50,7 @@ export const password = () => {
     };
 
     return createElement('form', {
-        id: 'password-form',
-        classList: ['login-container'],
+        classList: ['card'],
         children: [
             createElement('h1', { text: 'password' }),
             inputGroup({

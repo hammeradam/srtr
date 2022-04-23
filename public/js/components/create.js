@@ -90,8 +90,7 @@ export const create = () => {
     };
 
     return createElement('form', {
-        id: 'create-form',
-        classList: ['create-container'],
+        classList: ['card'],
         children: [
             createElement('h1', { text: 'srtr' }),
             inputGroup({

@@ -1,7 +1,7 @@
 import express, { Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { hash, compare } from 'bcrypt';
-import { validateLink, generateName, sendHtml } from 'utils';
+import { validateLink, generateName } from 'utils';
 import prisma from 'prisma';
 
 const router = express.Router();

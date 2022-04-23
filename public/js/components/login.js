@@ -59,8 +59,7 @@ export const login = () => {
     };
 
     return createElement('form', {
-        id: 'login-form',
-        classList: ['login-container'],
+        classList: ['card'],
         children: [
             createElement('h1', { text: 'login' }),
             inputGroup({
