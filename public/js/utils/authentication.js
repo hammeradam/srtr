@@ -22,26 +22,25 @@ export const parseJwt = (token) =>
         )
     );
 
-export const setLogin = async (request) => {
-    const response = await request.json();
-    window.accessToken = response.token;
-    showLoggedInState(response.user);
-};
+export const setLogin = async (request) => {};
 
 export const checkLogin = async () => {
     const request = await sendRequest(REFRESH_TOKEN_PATH, {
         method: 'POST',
     });
 
-    if (request.ok) {
-        return setLogin(request);
+    const response = await request.json();
+
+    if (request.ok && response.token) {
+        window.accessToken = response.token;
+        showLoggedInState(response.user);
+
+        return;
     }
 
     showLoggedOutState();
     window.accessToken = '';
 };
-
-checkLogin();
 
 export const showLoggedInState = (user) => {
     document.querySelector('[href="/login"]').parentElement.style.display =

@@ -169,25 +169,32 @@ router.get('/callback/google', async (req, res) => {
 });
 
 router.post('/refresh_token', async (req, res) => {
-    const token = req.cookies[COOKIE_NAME];
-    const payload = jwt.verify(token, process.env.TOKEN_SECRET);
+    try {
+        const token = req.cookies[COOKIE_NAME];
+        const payload = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    const user = await prisma.user.findFirst({
-        where: {
-            id: (payload as JwtPayload).userId,
-        },
-    });
+        const user = await prisma.user.findFirst({
+            where: {
+                id: (payload as JwtPayload).userId,
+            },
+        });
 
-    if (!user || user.tokenVersion !== (payload as JwtPayload).tokenVersion) {
-        throw new ApplicationError('missing_refresh_token', 401);
+        if (
+            !user ||
+            user.tokenVersion !== (payload as JwtPayload).tokenVersion
+        ) {
+            throw new ApplicationError('missing_refresh_token', 401);
+        }
+
+        sendRefreshToken(res, createRefreshToken(user));
+
+        return res.json({
+            token: createAccessToken(user),
+            user: user.name || user.email,
+        });
+    } catch {
+        return res.json({});
     }
-
-    sendRefreshToken(res, createRefreshToken(user));
-
-    return res.json({
-        token: createAccessToken(user),
-        user: user.name || user.email,
-    });
 });
 
 router.post('/logout', (_req, res) => {
