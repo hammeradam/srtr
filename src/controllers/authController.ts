@@ -170,18 +170,18 @@ router.get('/callback/google', async (req, res) => {
 router.post('/refresh_token', async (req, res) => {
     try {
         const token = req.cookies[COOKIE_NAME];
-        const payload = jwt.verify(token, process.env.TOKEN_SECRET);
+        const payload = jwt.verify(
+            token,
+            process.env.TOKEN_SECRET
+        ) as JwtPayload;
 
         const user = await prisma.user.findFirst({
             where: {
-                id: (payload as JwtPayload).userId,
+                id: payload.userId,
             },
         });
 
-        if (
-            !user ||
-            user.tokenVersion !== (payload as JwtPayload).tokenVersion
-        ) {
+        if (!user || user.tokenVersion !== payload.tokenVersion) {
             throw new ApplicationError('missing_refresh_token', 401);
         }
 

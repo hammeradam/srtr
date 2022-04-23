@@ -13,9 +13,13 @@ const getUser = async (req: Request) => {
         return null;
     }
 
-    const payload = jwt.verify(token ?? '', process.env.TOKEN_SECRET);
+    const payload = jwt.verify(
+        token ?? '',
+        process.env.TOKEN_SECRET
+    ) as JwtPayload;
+
     const user = await prisma.user.findFirst({
-        where: { id: (payload as JwtPayload).userId },
+        where: { id: payload.userId },
         include: {
             links: true,
         },
