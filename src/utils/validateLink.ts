@@ -16,35 +16,39 @@ export const validateLink = async (req: Request, res: Response) => {
     const { url, name } = req.body;
 
     if (!url) {
-        res.status(400);
-        return res.json({
+        res.status(400).json({
             error: 'url_required',
             field: 'url',
         });
+
+        return false;
     }
 
     if (!validateUrl(url)) {
-        res.status(400);
-        return res.json({
+        res.status(400).json({
             error: 'url_invalid',
             field: 'url',
         });
+
+        return false;
     }
 
     if (name && (await prisma.link.findFirst({ where: { name } }))) {
-        res.status(400);
-        return res.json({
+        res.status(400).json({
             error: 'name_taken',
             field: 'name',
         });
+
+        return false;
     }
 
     if (name && !validateName(name)) {
-        res.status(400);
-        return res.json({
+        res.status(400).json({
             error: 'name_invalid',
             field: 'name',
         });
+
+        return false;
     }
 
     return true;

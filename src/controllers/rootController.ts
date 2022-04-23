@@ -24,8 +24,7 @@ router.get('/l/:name', async (req, res) => {
     });
 
     if (link.password) {
-        req.session.name = link.name;
-        return sendHtml(res, 'password');
+        return res.redirect(`/password?name=${link.name}`);
     }
 
     res.redirect(link.url);

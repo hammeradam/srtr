@@ -1,12 +1,13 @@
 import { createElement } from '../utils/createElement.js';
 
-import { check } from '../components/check.js';
-import { create } from '../components/create.js';
-import { forgotPassword } from '../components/forgotPassword.js';
-import { login } from '../components/login.js';
-import { magicLogin } from '../components/magicLogin.js';
-import { register } from '../components/register.js';
-import { resetPassword } from '../components/resetPassword.js';
+import { check } from './check.js';
+import { create } from './create.js';
+import { forgotPassword } from './forgotPassword.js';
+import { login } from './login.js';
+import { magicLogin } from './magicLogin.js';
+import { register } from './register.js';
+import { resetPassword } from './resetPassword.js';
+import { password } from './password.js';
 
 export const navigateTo = (path, pushState = true) => {
     const main = document.querySelector('body main');
@@ -33,6 +34,8 @@ const getComponent = (path) => {
             return resetPassword;
         case 'magic-login':
             return magicLogin;
+        case 'password':
+            return password;
         case '':
             return create;
         default:
@@ -43,9 +46,13 @@ const getComponent = (path) => {
 export const router = () => {
     setTimeout(() => {
         navigateTo(window.location.pathname.substring(1), false);
-        document
-            .querySelector(`[href="${window.location.pathname}"]`)
-            .classList.add('active');
+        const navItem = document.querySelector(
+            `[href="${window.location.pathname}"]`
+        );
+
+        if (navItem) {
+            navItem.classList.add('active');
+        }
     });
 
     window.addEventListener('popstate', () => {

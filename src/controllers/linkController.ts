@@ -27,20 +27,22 @@ const getUser = async (req: Request) => {
 // CREATE
 router.post('/', async (req, res) => {
     if (!(await validateLink(req, res))) {
-        return res.status(400).end();
+        return;
     }
 
     const user = await getUser(req);
     const name = req.body.name || (await generateName());
+    const password =
+        req.body.password && req.body.password.length
+            ? await hash(req.body.password, 10)
+            : undefined;
 
+    console.log({ password });
     const link = await prisma.link.create({
         data: {
             name,
             url: req.body.url,
-            password:
-                req.body.password && req.body.password.length
-                    ? await hash(req.body.password, 10)
-                    : undefined,
+            password,
             limit: req.body.limit || undefined,
             userId: user?.id,
         },
@@ -67,25 +69,22 @@ router.get('/', async (_req, res) =>
 
 // PASSWORD
 router.post('/password', async (req, res) => {
-    const { password } = req.body;
-    const name = req.session.name;
+    const { password, name } = req.body;
+    const link = await prisma.link.findFirst({ where: { name } });
+
+    if (!link) {
+        return res.status(404).end();
+    }
 
     if (!password?.length || !name?.length) {
-        return sendHtml(res, '400', 400);
+        return res.status(400).end();
     }
-
-    const link = await prisma.link.findFirst({ where: { name } });
-    if (!link) {
-        return sendHtml(res, '404', 404);
-    }
-
-    req.session.destroy(() => {});
 
     if (!(await compare(password, link.password || ''))) {
-        return sendHtml(res, '400', 400);
+        return res.status(403).end();
     }
 
-    res.redirect(link.url);
+    res.json({ url: link.url });
 });
 
 // OWN
