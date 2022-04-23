@@ -148,7 +148,7 @@ router.get('/callback/email', loggedOutMiddleware, async (req, res) => {
 
 router.get('/callback/github', async (req, res) => {
     const accessToken = await getGithubAccessToken(String(req.query.code));
-    const userData = await getGithubUserDetails(accessToken);
+    const userData = await getGithubUserDetails('accessToken');
     const user = await findOrCreateGithubUser(userData);
 
     sendRefreshToken(res, createRefreshToken(user));
