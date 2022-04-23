@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
-import axios from 'axios';
 import { URLSearchParams } from 'url';
 import prisma from 'prisma';
 
@@ -58,23 +57,29 @@ export const getGoogleAccessToken = async (code: string) => {
         code,
     });
 
-    const response = await axios.post(GOOGLE_TOKEN_URL, params.toString(), {
+    const request = await fetch(GOOGLE_TOKEN_URL, {
+        method: 'POST',
         headers: {
             Accept: 'application/x-www-form-urlencoded',
         },
+        body: params,
     });
 
-    return response.data.access_token;
+    const response = await request.json();
+
+    return response.access_token;
 };
 
 export const getGoogleUserDetails = async (accessToken: string) => {
-    const response = await axios.get(GOOGLE_USER_URL, {
+    const request = await fetch(GOOGLE_USER_URL, {
         headers: {
             Authorization: 'Bearer ' + accessToken,
         },
     });
 
-    return response.data;
+    const response = await request.json();
+
+    return response;
 };
 
 export const findOrCreategoogleUser = async (googleData: any) => {
@@ -101,33 +106,35 @@ export const findOrCreategoogleUser = async (googleData: any) => {
     return newUser;
 };
 
-export const getGithubAccessToken = async (code: string): Promise<string> => {
-    const response = await axios.post(
-        GITHUB_TOKEN_URL,
-        {},
-        {
-            params: {
-                client_id: process.env.GITHUB_CLIENT_ID,
-                client_secret: process.env.GITHUB_CLIENT_SECRET,
-                code,
-            },
-            headers: {
-                Accept: 'application/json',
-            },
-        }
-    );
+export const getGithubAccessToken = async (code: string) => {
+    const params = new URLSearchParams({
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code,
+    }).toString();
 
-    return response.data.access_token;
+    const request = await fetch(GITHUB_TOKEN_URL + '?' + params, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+        },
+    });
+
+    const response = await request.json();
+
+    return response;
 };
 
 export const getGithubUserDetails = async (accessToken: string) => {
-    const response = await axios.get(GITHUB_USER_URL, {
+    const request = await fetch(GITHUB_USER_URL, {
         headers: {
             Authorization: 'token ' + accessToken,
         },
     });
 
-    return response.data;
+    const response = await request.json();
+
+    return response;
 };
 
 export const findOrCreateGithubUser = async (githubData: any) => {
