@@ -8,6 +8,9 @@
         "start": "ts-node --files -r tsconfig-paths/register ./src/index.ts",
         "postinstall": "prisma generate --schema=./src/prisma/schema.prisma && node replaceFrontendEnv.js",
         "prettier": "prettier ./src --write",
+        "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
+        "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma",
+        "prisma:push": "prisma generate --schema=./src/prisma/schema.prisma",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],

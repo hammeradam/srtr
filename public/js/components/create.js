@@ -9,6 +9,7 @@ import {
     url,
 } from '../utils/validation.js';
 import { inputGroup } from './inputGroup.js';
+import { navigateTo } from './router.js';
 
 export const create = () => {
     const inputs = [
@@ -78,15 +79,9 @@ export const create = () => {
             // nameError.classList.add('show');
             return;
         }
-        const { name } = await response.json();
+        const link = await response.json();
 
-        // createSuccess.classList.remove('d-none');
-        // copy.classList.remove('d-none');
-        // copied.classList.add('d-none');
-        // createSuccess.setAttribute(
-        //     'data-url',
-        //     new URL(`l/${name}`, window.location.origin).href
-        // );
+        navigateTo('created', { link });
     };
 
     return createElement('form', {
@@ -108,17 +103,21 @@ export const create = () => {
             createElement('details', {
                 children: [
                     createElement('summary', { text: 'settings' }),
-                    inputGroup({
-                        name: 'password',
-                        type: 'password',
-                        id: 'create-password',
-                        label: 'password',
-                    }),
-                    inputGroup({
-                        name: 'limit',
-                        type: 'number',
-                        id: 'create-limit',
-                        label: 'usage limit',
+                    createElement('div', {
+                        children: [
+                            inputGroup({
+                                name: 'password',
+                                type: 'password',
+                                id: 'create-password',
+                                label: 'password',
+                            }),
+                            inputGroup({
+                                name: 'limit',
+                                type: 'number',
+                                id: 'create-limit',
+                                label: 'usage limit',
+                            }),
+                        ],
                     }),
                 ],
             }),

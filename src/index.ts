@@ -8,6 +8,7 @@ import {
 } from 'utils';
 
 const app = express();
+app.set('trust proxy', true);
 
 registerMiddleware(app);
 registerControllers(app);

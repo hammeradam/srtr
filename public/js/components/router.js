@@ -9,8 +9,9 @@ import { register } from './register.js';
 import { resetPassword } from './resetPassword.js';
 import { password } from './password.js';
 import { error } from './error.js';
+import { created } from './created.js';
 
-export const navigateTo = (path, pushState = true) => {
+export const navigateTo = (path, props, { pushState = true }) => {
     const main = document.querySelector('body main');
 
     if (pushState) {
@@ -18,7 +19,7 @@ export const navigateTo = (path, pushState = true) => {
     }
 
     main.innerHTML = '';
-    main.appendChild(getComponent(path)());
+    main.appendChild(getComponent(path)(props));
 };
 
 const getComponent = (path) => {
@@ -37,6 +38,8 @@ const getComponent = (path) => {
             return magicLogin;
         case 'password':
             return password;
+        case 'created':
+            return created;
         case '':
             return create;
         default:
@@ -46,7 +49,9 @@ const getComponent = (path) => {
 
 export const router = () => {
     setTimeout(() => {
-        navigateTo(window.location.pathname.substring(1), false);
+        navigateTo(window.location.pathname.substring(1), null, {
+            pushState: false,
+        });
         const navItem = document.querySelector(
             `[href="${window.location.pathname}"]`
         );

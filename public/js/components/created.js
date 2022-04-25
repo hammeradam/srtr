@@ -1,0 +1,50 @@
+import { createElement } from '../utils/createElement.js';
+import { navigateTo } from './router.js';
+
+export const created = ({ link }) => {
+    if (!link) {
+        navigateTo('error');
+    }
+    const href = new URL(`l/${link.name}`, window.location.origin).href;
+
+    return createElement('div', {
+        classList: ['card'],
+        children: [
+            createElement('h1', {
+                style: 'white-space: nowrap;',
+                text: 'link created',
+            }),
+            createElement('div', {
+                classList: ['success'],
+                children: [
+                    createElement('p', {
+                        text: 'Your link has been created.',
+                    }),
+                    createElement('a', {
+                        text: link.name,
+                        href,
+                    }),
+                ],
+            }),
+        ],
+    });
+};
+
+{
+    /* <span>
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="copied"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+    >
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+        />
+    </svg>
+</span>; */
+}

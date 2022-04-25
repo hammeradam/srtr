@@ -1,6 +1,6 @@
 import express from 'express';
 import prisma from 'prisma';
-import { sendHtml } from 'utils';
+import { sendHtml, saveAnalytics } from 'utils';
 
 const router = express.Router();
 
@@ -12,6 +12,8 @@ router.get('/l/:name', async (req, res) => {
     if (!link || (link.limit && link.limit <= link.hitCount)) {
         return res.status(404).redirect('/error?code=404');
     }
+
+    await saveAnalytics(req, link);
 
     await prisma.link.updateMany({
         where: { name: req.params.name },
