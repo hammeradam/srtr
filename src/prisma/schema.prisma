@@ -50,7 +50,7 @@ model Token {
 model Analytics {
     id        String   @id @default(cuid())
     ip        String
-    userAgent String?
+    userAgent String   @db.VarChar(500)
     browser   String?
     os        String?
     device    String?
