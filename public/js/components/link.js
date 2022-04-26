@@ -70,7 +70,7 @@ export const link = async ({ name }) => {
                         {
                             header: 'device',
                             accessor: 'device',
-                            render: (value) => value.device || '-',
+                            render: (value) => device || '-',
                         },
                     ],
                 })),
