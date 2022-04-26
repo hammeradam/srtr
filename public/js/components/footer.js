@@ -8,12 +8,12 @@ export const footer = () => {
                 classList: ['footer__links'],
                 children: [
                     createElement('a', {
-                        href: '',
+                        href: '/public/cookie_policy.pdf',
                         target: '_blank',
                         text: 'cookie policy',
                     }),
                     createElement('a', {
-                        href: '',
+                        href: '/public/privacy_policy.pdf',
                         target: '_blank',
                         text: 'privacy policy',
                     }),
