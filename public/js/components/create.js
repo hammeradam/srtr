@@ -117,6 +117,12 @@ export const create = () => {
                                 id: 'create-limit',
                                 label: 'usage limit',
                             }),
+                            inputGroup({
+                                name: 'hasAdvancedAnalytics',
+                                type: 'checkbox',
+                                id: 'create-has-advanced-analytics',
+                                label: 'advanced analytics',
+                            }),
                         ],
                     }),
                 ],

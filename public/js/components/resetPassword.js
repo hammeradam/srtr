@@ -1,4 +1,5 @@
 import { createElement } from '../utils/createElement.js';
+import { getQueryParam } from '../utils/getQueryParam.js';
 import { equals, required, createFormValidator } from '../utils/validation.js';
 import { inputGroup } from './inputGroup.js';
 
@@ -37,15 +38,8 @@ export const resetPassword = () => {
             return;
         }
 
-        const queryParams = new Proxy(
-            new URLSearchParams(window.location.search),
-            {
-                get: (searchParams, prop) => searchParams.get(prop),
-            }
-        );
-
-        const userId = queryParams.userId;
-        const token = queryParams.token;
+        const userId = getQueryParam('userId');
+        const token = getQueryParam('token');
 
         const request = await sendRequest('/api/auth/reset-password', {
             method: 'POST',

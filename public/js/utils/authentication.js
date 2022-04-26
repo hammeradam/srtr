@@ -7,8 +7,12 @@ const GITHUB_CLIENT_ID = '9fd26d2f35d5520e4f3a';
 // prettier-ignore
 const GOOGLE_CLIENT_ID = '697090043703-5v8qd9p8efre0pdfo6s2c2ci5k9pld16.apps.googleusercontent.com';
 
-export const parseJwt = (token) =>
-    JSON.parse(
+export const parseJwt = (token) => {
+    if (!token) {
+        return null;
+    }
+
+    return JSON.parse(
         decodeURIComponent(
             window
                 .atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))
@@ -21,8 +25,7 @@ export const parseJwt = (token) =>
                 .join('')
         )
     );
-
-export const setLogin = async (request) => {};
+};
 
 export const checkLogin = async () => {
     const request = await sendRequest(REFRESH_TOKEN_PATH, {
@@ -33,12 +36,10 @@ export const checkLogin = async () => {
 
     if (request.ok && response.token) {
         window.accessToken = response.token;
-        showLoggedInState(response.user);
 
         return;
     }
 
-    showLoggedOutState();
     window.accessToken = '';
 };
 
@@ -49,7 +50,6 @@ export const showLoggedInState = (user) => {
         'none';
     document.querySelector('[href="/logout"]').parentElement.style.display =
         'block';
-
     const profileLink = document.querySelector('[href="/profile"]');
     profileLink.innerHTML = user;
     profileLink.parentElement.style.display = 'block';

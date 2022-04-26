@@ -13,7 +13,7 @@ const validateUrl = (string: string) => {
 const validateName = (name: string) => /^[A-z0-9-._]+$/.test(name);
 
 export const validateLink = async (req: Request, res: Response) => {
-    const { url, name } = req.body;
+    const { url, name, hasAdvancedAnalytics } = req.body;
 
     if (!url) {
         res.status(400).json({

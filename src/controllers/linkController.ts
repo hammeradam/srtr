@@ -1,32 +1,15 @@
-import express, { Request } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import express from 'express';
 import { hash, compare } from 'bcrypt';
-import { validateLink, generateName } from 'utils';
+import {
+    validateLink,
+    generateName,
+    getLoggedInUser,
+    sendHtml,
+    getPaginationParams,
+} from 'utils';
 import prisma from 'prisma';
 
 const router = express.Router();
-
-const getUser = async (req: Request) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-
-    if (!token) {
-        return null;
-    }
-
-    const payload = jwt.verify(
-        token ?? '',
-        process.env.TOKEN_SECRET
-    ) as JwtPayload;
-
-    const user = await prisma.user.findFirst({
-        where: { id: payload.userId },
-        include: {
-            links: true,
-        },
-    });
-
-    return user;
-};
 
 // CREATE
 router.post('/', async (req, res) => {
@@ -34,14 +17,13 @@ router.post('/', async (req, res) => {
         return;
     }
 
-    const user = await getUser(req);
+    const user = await getLoggedInUser(req);
     const name = req.body.name || (await generateName());
     const password =
         req.body.password && req.body.password.length
             ? await hash(req.body.password, 10)
             : undefined;
 
-    console.log({ password });
     const link = await prisma.link.create({
         data: {
             name,
@@ -49,6 +31,8 @@ router.post('/', async (req, res) => {
             password,
             limit: req.body.limit || undefined,
             userId: user?.id,
+            hasAdvancedAnalytics:
+                req.body.hasAdvancedAnalytics === 'on' || false,
         },
     });
 
@@ -93,7 +77,7 @@ router.post('/password', async (req, res) => {
 
 // OWN
 router.get('/own', async (req, res) => {
-    const user = await getUser(req);
+    const user = await getLoggedInUser(req);
 
     if (!user) {
         return res.status(401).end();
@@ -105,23 +89,53 @@ router.get('/own', async (req, res) => {
 // GET
 router.get('/:name', async (req, res) => {
     const { name } = req.params;
-
-    if (!name) {
-        res.status(400);
-        return res.json({
-            error: 'name_required',
-            field: 'name',
-        });
-    }
-
-    const link = await prisma.link.findFirst({ where: { name } });
+    const link = await prisma.link.findFirst({
+        where: { name },
+    });
 
     if (!link) {
         res.status(404);
         res.end();
+        return;
     }
 
-    res.json({ link });
+    const user = await getLoggedInUser(req);
+
+    if (link.userId && (!user || link.userId !== user.id)) {
+        return res.status(403).end();
+    }
+
+    res.json({
+        link: {
+            url: link.url,
+            name: link.name,
+            hitCount: link.hitCount,
+        },
+    });
+});
+
+router.get('/:name/analytics', async (req, res) => {
+    const { name } = req.params;
+    const paginationOptions = getPaginationParams(req);
+
+    const analyticsCount = await prisma.analytics.count({
+        where: {
+            link: {
+                name,
+            },
+        },
+    });
+
+    const analytics = await prisma.analytics.findMany({
+        where: {
+            link: {
+                name,
+            },
+        },
+        ...paginationOptions,
+    });
+
+    res.json({ data: analytics, count: analyticsCount });
 });
 
 export default router;

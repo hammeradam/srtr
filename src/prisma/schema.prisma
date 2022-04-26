@@ -24,17 +24,18 @@ model User {
 }
 
 model Link {
-    id        String      @id @default(cuid())
-    url       String      @db.VarChar(255)
-    name      String      @db.VarChar(255)
-    password  String?     @db.VarChar(255)
-    hitCount  Int         @default(0)
-    limit     Int?
-    userId    String?
-    user      User?       @relation(fields: [userId], references: [id])
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
-    Analytics Analytics[]
+    id                   String      @id @default(cuid())
+    url                  String      @db.VarChar(255)
+    name                 String      @db.VarChar(255)
+    password             String?     @db.VarChar(255)
+    hitCount             Int         @default(0)
+    limit                Int?
+    userId               String?
+    user                 User?       @relation(fields: [userId], references: [id])
+    hasAdvancedAnalytics Boolean     @default(false)
+    analytics            Analytics[]
+    createdAt            DateTime    @default(now())
+    updatedAt            DateTime    @updatedAt
 }
 
 model Token {
@@ -50,7 +51,7 @@ model Token {
 model Analytics {
     id        String   @id @default(cuid())
     ip        String
-    userAgent String   @db.VarChar(500)
+    userAgent String?  @db.VarChar(500)
     browser   String?
     os        String?
     device    String?

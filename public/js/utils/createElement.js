@@ -28,7 +28,9 @@ export const createElement = (type, options = {}) => {
             return;
         }
 
-        element.setAttribute(key, value);
+        if (value) {
+            element.setAttribute(key, value);
+        }
     });
     return element;
 };

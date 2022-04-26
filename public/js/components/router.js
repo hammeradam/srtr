@@ -10,16 +10,21 @@ import { resetPassword } from './resetPassword.js';
 import { password } from './password.js';
 import { error } from './error.js';
 import { created } from './created.js';
+import { link } from './link.js';
 
-export const navigateTo = (path, props, { pushState = true }) => {
+export const navigateTo = async (path, props, options) => {
     const main = document.querySelector('body main');
 
-    if (pushState) {
+    if (options?.pushState !== false) {
         history.pushState(null, null, `/${path}`);
     }
 
     main.innerHTML = '';
-    main.appendChild(getComponent(path)(props));
+
+    const component = await getComponent(path)(props);
+    if (component) {
+        main.appendChild(component);
+    }
 };
 
 const getComponent = (path) => {
@@ -40,10 +45,14 @@ const getComponent = (path) => {
             return password;
         case 'created':
             return created;
+        case path.match(/^link\/(.+)$/)?.input:
+            return () => link({ name: path.match(/^link\/(.+)$/)[1] });
+        case 'error':
+            return error;
         case '':
             return create;
         default:
-            return error;
+            return () => error({ code: 404 });
     }
 };
 

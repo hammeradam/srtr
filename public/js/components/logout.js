@@ -3,9 +3,9 @@ import { createElement } from '../utils/createElement.js';
 import { sendRequest } from '../utils/sendRequest.js';
 import { navigateTo } from './router.js';
 
-export const logout = () => {
+export const logout = (options) => {
     return createElement('li', {
-        style: 'display: none;',
+        ...options,
         children: [
             createElement('a', {
                 href: '/logout',

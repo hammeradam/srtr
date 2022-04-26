@@ -8,7 +8,7 @@ import {
     required,
 } from '../utils/validation.js';
 import { inputGroup } from './inputGroup.js';
-import { setLogin } from '../utils/authentication.js';
+import { showLoggedInState } from '../utils/authentication.js';
 
 export const register = () => {
     const inputs = [
@@ -54,7 +54,8 @@ export const register = () => {
         });
 
         if (request.ok) {
-            setLogin(request);
+            const response = await request.json();
+            showLoggedInState(response.user);
             navigateTo('');
         }
     };

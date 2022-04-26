@@ -13,11 +13,13 @@ export const saveAnalytics = async (req: Request, link: Link) => {
 
     await prisma.analytics.create({
         data: {
-            userAgent,
+            userAgent: userAgent,
             ip: getIp(req),
             os: `${ua.os.name} ${ua.os.version}`,
             browser: `${ua.browser.name} ${ua.browser.version}`,
-            device: `${ua.device.vendor} ${ua.device.model} ${ua.device.type}`,
+            device: `${ua.device.vendor || ''} ${ua.device.model || ''} ${
+                ua.device.type || ''
+            }`.trim(),
             linkId: link.id,
         },
     });

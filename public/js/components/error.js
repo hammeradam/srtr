@@ -13,8 +13,8 @@ const getErrorText = (code) => {
     return errorMapping[code] || 'something went wrong';
 };
 
-export const error = () => {
-    const code = getQueryParam('code');
+export const error = (params) => {
+    const code = params?.code || getQueryParam('code');
 
     return createElement('div', {
         classList: ['error-page'],

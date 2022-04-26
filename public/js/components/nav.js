@@ -1,9 +1,12 @@
+import { parseJwt } from '../utils/authentication.js';
 import { createElement } from '../utils/createElement.js';
 import { logout } from './logout.js';
 import { navItem } from './navItem.js';
 import { themeToggle } from './themeToggle.js';
 
 export const nav = () => {
+    const tokenData = parseJwt(window.accessToken);
+
     return createElement('div', {
         classList: ['navigation-container'],
         children: [
@@ -16,16 +19,30 @@ export const nav = () => {
                             createElement('li', {
                                 classList: ['nav-separator'],
                             }),
-                            navItem('/profile', '', {
-                                style: 'display: none;',
-                            }),
+                            navItem(
+                                '/profile',
+                                tokenData ? tokenData.email : '',
+                                {
+                                    style: `display: ${
+                                        tokenData ? 'block' : 'none'
+                                    };`,
+                                }
+                            ),
                             navItem('/login', 'LOGIN', {
-                                style: 'display: none; align',
+                                style: `display: ${
+                                    tokenData ? 'none' : 'block'
+                                };`,
                             }),
                             navItem('/register', 'REGISTER', {
-                                style: 'display: none; align',
+                                style: `display: ${
+                                    tokenData ? 'none' : 'block'
+                                };`,
                             }),
-                            logout(),
+                            logout({
+                                style: `display: ${
+                                    tokenData ? 'block' : 'none'
+                                };`,
+                            }),
                             createElement('li', {
                                 id: 'darkModeToggle',
                                 children: [themeToggle()],

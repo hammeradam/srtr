@@ -6,7 +6,7 @@ import { inputGroup } from './inputGroup.js';
 import {
     getGithubAuthUrl,
     getGoogleAuthUrl,
-    setLogin,
+    showLoggedInState,
 } from '../utils/authentication.js';
 
 export const login = () => {
@@ -53,7 +53,8 @@ export const login = () => {
         });
 
         if (request.ok) {
-            setLogin(request);
+            const response = await request.json();
+            showLoggedInState(response.user);
             navigateTo('');
         }
     };
@@ -77,7 +78,7 @@ export const login = () => {
             createElement('a', {
                 href: '/forgot-password',
                 text: 'forgot password?',
-                classList: ['btn', 'forgot-password-btn'],
+                classList: ['btn', 'btn--sm', 'forgot-password-button'],
                 events: {
                     click: (event) => {
                         event.preventDefault();
