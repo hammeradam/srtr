@@ -41,38 +41,39 @@ export const link = async ({ name }) => {
                     }),
                 ],
             }),
-            await table({
-                resourcePath: `/api/url/${name}/analytics`,
-                hasPagination: true,
-                id: 'analyticsTable',
-                columns: [
-                    {
-                        header: 'date',
-                        accessor: 'createdAt',
-                        render: (value) => new Date(value).toLocaleString(),
-                    },
-                    {
-                        header: 'ip',
-                        accessor: 'ip',
-                        render: (value) => value,
-                    },
-                    {
-                        header: 'os',
-                        accessor: 'os',
-                        render: (value) => value,
-                    },
-                    {
-                        header: 'browser',
-                        accessor: 'browser',
-                        render: (value) => value,
-                    },
-                    {
-                        header: 'device',
-                        accessor: 'device',
-                        render: (value) => value.device || '-',
-                    },
-                ],
-            }),
+            link.hasAdvandedAnalytics &&
+                (await table({
+                    resourcePath: `/api/url/${name}/analytics`,
+                    hasPagination: true,
+                    id: `${name}_analytics`,
+                    columns: [
+                        {
+                            header: 'date',
+                            accessor: 'createdAt',
+                            render: (value) => new Date(value).toLocaleString(),
+                        },
+                        {
+                            header: 'ip',
+                            accessor: 'ip',
+                            render: (value) => value,
+                        },
+                        {
+                            header: 'os',
+                            accessor: 'os',
+                            render: (value) => value,
+                        },
+                        {
+                            header: 'browser',
+                            accessor: 'browser',
+                            render: (value) => value,
+                        },
+                        {
+                            header: 'device',
+                            accessor: 'device',
+                            render: (value) => value.device || '-',
+                        },
+                    ],
+                })),
         ],
     });
 };

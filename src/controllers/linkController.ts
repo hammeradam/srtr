@@ -43,17 +43,24 @@ router.post('/', async (req, res) => {
 });
 
 // GET ALL
-router.get('/', async (_req, res) =>
-    res.json(
-        await prisma.link.findMany({
-            select: {
-                url: true,
-                name: true,
-                hitCount: true,
-            },
-        })
-    )
-);
+router.get('/', async (req, res) => {
+    const user = await getLoggedInUser(req);
+
+    if (!user) {
+        return res.status(401).end();
+    }
+
+    const links = await prisma.link.findMany({
+        where: { userId: user.id },
+        select: {
+            url: true,
+            name: true,
+            hitCount: true,
+        },
+    });
+
+    return res.json({ links });
+});
 
 // PASSWORD
 router.post('/password', async (req, res) => {
@@ -73,17 +80,6 @@ router.post('/password', async (req, res) => {
     }
 
     res.json({ url: link.url });
-});
-
-// OWN
-router.get('/own', async (req, res) => {
-    const user = await getLoggedInUser(req);
-
-    if (!user) {
-        return res.status(401).end();
-    }
-
-    return res.json({ links: user.links });
 });
 
 // GET
@@ -110,6 +106,7 @@ router.get('/:name', async (req, res) => {
             url: link.url,
             name: link.name,
             hitCount: link.hitCount,
+            hasAdvandedAnalytics: link.hasAdvancedAnalytics,
         },
     });
 });

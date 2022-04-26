@@ -16,9 +16,6 @@ export const getLoggedInUser = async (req: Request) => {
 
     const user = await prisma.user.findFirst({
         where: { id: payload.userId },
-        include: {
-            links: true,
-        },
     });
 
     return user;

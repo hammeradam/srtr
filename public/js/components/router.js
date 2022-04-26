@@ -11,6 +11,7 @@ import { password } from './password.js';
 import { error } from './error.js';
 import { created } from './created.js';
 import { link } from './link.js';
+import { profile } from './profile.js';
 
 export const navigateTo = async (path, props, options) => {
     const main = document.querySelector('body main');
@@ -45,6 +46,8 @@ const getComponent = (path) => {
             return password;
         case 'created':
             return created;
+        case 'profile':
+            return profile;
         case path.match(/^link\/(.+)$/)?.input:
             return () => link({ name: path.match(/^link\/(.+)$/)[1] });
         case 'error':

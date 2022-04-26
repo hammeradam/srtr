@@ -1,5 +1,6 @@
 import { createElement } from '../utils/createElement.js';
 import { sendRequest } from '../utils/sendRequest.js';
+import { navigateTo } from './router.js';
 
 const PAGESIZE = 1;
 
@@ -16,18 +17,18 @@ const renderRows = (data, columns) =>
 
 const updatePageNumber = async (id, page) => {
     document.querySelector(
-        `#${id} .table-pagination-wrapper p`
+        `.${id} .table-pagination-wrapper p`
     ).textContent = `page ${page + 1}`;
 };
 
 const removeRows = (id) => {
     document
-        .querySelectorAll(`#${id} table tr:not(:first-child)`)
+        .querySelectorAll(`.${id} table tr:not(:first-child)`)
         .forEach((row) => row.remove());
 };
 
 const appendRows = (id, rows, columns) => {
-    document.querySelector(`#${id} table`).append(...renderRows(rows, columns));
+    document.querySelector(`.${id} table`).append(...renderRows(rows, columns));
 };
 
 const updateTable = (id, page, data, columns) => {
@@ -66,12 +67,12 @@ export const table = async ({
         );
 
         document
-            .querySelector(`#${id} .table-pagination-wrapper__prev`)
+            .querySelector(`.${id} .table-pagination-wrapper__prev`)
             .removeAttribute('disabled');
 
         if (count <= (page + 1) * PAGESIZE) {
             document
-                .querySelector(`#${id} .table-pagination-wrapper__next`)
+                .querySelector(`.${id} .table-pagination-wrapper__next`)
                 .setAttribute('disabled', true);
         }
 
@@ -87,12 +88,12 @@ export const table = async ({
         );
 
         document
-            .querySelector(`#${id} .table-pagination-wrapper__next`)
+            .querySelector(`.${id} .table-pagination-wrapper__next`)
             .removeAttribute('disabled');
 
         if (page === 0) {
             document
-                .querySelector(`#${id} .table-pagination-wrapper__prev`)
+                .querySelector(`.${id} .table-pagination-wrapper__prev`)
                 .setAttribute('disabled', true);
         }
 
@@ -109,7 +110,7 @@ export const table = async ({
     );
 
     return createElement('div', {
-        id,
+        classList: [id],
         children: [
             createElement('table', {
                 children: [
@@ -147,7 +148,7 @@ export const table = async ({
                                 'table-pagination-wrapper__next',
                             ],
                             disabled:
-                                count >= (page + 1) * PAGESIZE ? null : 'true',
+                                count > (page + 1) * PAGESIZE ? null : 'true',
                             text: 'next >',
                             events: {
                                 click: nextPage,
