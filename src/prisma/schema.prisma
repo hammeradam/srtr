@@ -36,6 +36,8 @@ model Link {
     analytics            Analytics[]
     createdAt            DateTime    @default(now())
     updatedAt            DateTime    @updatedAt
+
+    @@index([userId])
 }
 
 model Token {
@@ -46,6 +48,8 @@ model Token {
     user      User     @relation(fields: [userId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([userId])
 }
 
 model Analytics {
@@ -58,4 +62,6 @@ model Analytics {
     linkId    String
     link      Link     @relation(fields: [linkId], references: [id])
     createdAt DateTime @default(now())
+
+    @@index([linkId])
 }
