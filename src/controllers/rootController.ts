@@ -35,6 +35,11 @@ router.get('/l/:name', async (req, res) => {
 
 router.get('/ping', (_, res) => res.send('pong'));
 
+router.get('/pixel.png', (req, res) => {
+    console.log(req.query.id);
+    res.sendFile('pixel.png', { root: './public/img' });
+});
+
 router.get('/(.*)', (_, res) => sendHtml(res, 'index'));
 
 export default router;

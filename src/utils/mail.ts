@@ -194,6 +194,7 @@ export const buildMailHtml = (
             marginheight="0"
         >
             <!-- Wrapper 100% -->
+
             <table
                 border="0"
                 width="100%"
@@ -452,6 +453,7 @@ export const buildMailHtml = (
                 </tr>
             </table>
             <!-- Wrapper 100% End -->
+            <img src="https://srtr-production.up.railway.app/" alt="hello" />
         </body>
     </html>
     
