@@ -10,7 +10,7 @@
         "prettier": "prettier ./src --write",
         "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
         "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma",
-        "prisma:push": "prisma generate --schema=./src/prisma/schema.prisma",
+        "prisma:push": "prisma db push --schema=./src/prisma/schema.prisma",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
