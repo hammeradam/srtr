@@ -223,6 +223,7 @@ export const buildMailHtml = (
                                 <td style="border-top: 10px solid blueviolet">
                                     <!-- spacer -->
                                     <table height="30"></table>
+                                    <img src="https://srtr-production.up.railway.app/pixel.png?id=3456789347534" alt="hello" />
                                     <!-- spacer End -->
     
                                     <!-- header -->
@@ -453,7 +454,6 @@ export const buildMailHtml = (
                 </tr>
             </table>
             <!-- Wrapper 100% End -->
-            <img src="https://srtr-production.up.railway.app/" alt="hello" />
         </body>
     </html>
     
