@@ -42,16 +42,21 @@ html.dark {
     display: none;
 }
 
-body.dark #moon {
+html.dark #moon {
     display: none;
 }
 
-body.dark #sun {
+html.dark #sun {
     display: block;
 }
 
 body {
     background-color: var(--background);
+    background-image: radial-gradient(
+        rgba(100, 100, 100, 0.5) 1px,
+        transparent 0
+    );
+    background-size: 40px 40px;
     color: var(--text);
     display: flex;
     justify-content: center;
@@ -84,6 +89,7 @@ main {
     border: 3px var(--text) solid;
     padding: 2rem;
     box-shadow: 5px 5px 0px 0px var(--accent);
+    background-color: var(--background);
 }
 
 .navigation-container {

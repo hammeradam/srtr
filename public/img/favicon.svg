@@ -6,19 +6,20 @@
 >
     <style>
         path {
-            fill: white;
-        }
-        #rect {
             fill: black;
+        }
+
+        #rect {
+            fill: white;
         }
 
         @media (prefers-color-scheme: dark) {
             path {
-                fill: black;
+                fill: white;
             }
 
             #rect {
-                fill: white;
+                fill: black;
             }
         }
     </style>
