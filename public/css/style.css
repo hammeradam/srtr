@@ -5,7 +5,7 @@
     transition: background-color;
 }
 
-body {
+html {
     --info: #6595ed;
     --success: #79b374;
     --warning: #ffbe47;
@@ -16,8 +16,8 @@ body {
     --disabled: #ccc;
 }
 
-body.dark {
-    --background: #252525;
+html.dark {
+    --background: #160522;
     --text: #fff;
 }
 

@@ -74,7 +74,9 @@ export const router = () => {
     });
 
     window.addEventListener('popstate', () => {
-        navigateTo(window.location.pathname.substring(1), false);
+        navigateTo(window.location.pathname.substring(1), null, {
+            pushState: false,
+        });
     });
 
     return createElement('main');

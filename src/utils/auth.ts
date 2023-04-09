@@ -15,7 +15,7 @@ const getRedirectUri = (provider: string) =>
 
 export const createAccessToken = (user: User) => {
     return jwt.sign(
-        { userId: user.id, email: user.email },
+        { userId: user.id, email: user.email, name: user.name },
         process.env.TOKEN_SECRET,
         {
             expiresIn: '1h',

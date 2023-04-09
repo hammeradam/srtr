@@ -15,6 +15,11 @@
             type="image/svg+xml"
         />
         <link rel="stylesheet" href="/css/style.css" />
+        <script>
+            if (localStorage.getItem('isDark') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+        </script>
     </head>
     <body></body>
     <script type="module" src="/js/index.js"></script>

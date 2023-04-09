@@ -21,7 +21,7 @@ export const nav = () => {
                             }),
                             navItem(
                                 '/profile',
-                                tokenData ? tokenData.email : '',
+                                tokenData?.name ?? tokenData?.email ?? '',
                                 {
                                     style: `display: ${
                                         tokenData ? 'block' : 'none'
