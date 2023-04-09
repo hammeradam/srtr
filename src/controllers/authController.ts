@@ -22,6 +22,9 @@ import { loggedOutMiddleware } from 'middleware';
 import prisma from 'prisma';
 import { ApplicationError } from 'errors';
 
+const getRedirectUri = (provider: string) =>
+    `${process.env.BASE_URL}/api/auth/callback/${provider}`;
+
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -112,6 +115,24 @@ router.post('/login/email', async (req, res) => {
     });
 
     res.end();
+});
+
+router.get('/login/github', async (req, res) => {
+    const url = new URL('https://github.com/login/oauth/authorize');
+    url.searchParams.append('client_id', process.env.GITHUB_CLIENT_ID);
+    url.searchParams.append('redirect_uri', getRedirectUri('github'));
+
+    res.redirect(url.href);
+});
+
+router.get('/login/google', async (req, res) => {
+    const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    url.searchParams.append('client_id', process.env.GOOGLE_CLIENT_ID);
+    url.searchParams.append('redirect_uri', getRedirectUri('google'));
+    url.searchParams.append('scope', 'openid email profile');
+    url.searchParams.append('response_type', 'code');
+
+    res.redirect(url.href);
 });
 
 router.get('/callback/email', loggedOutMiddleware, async (req, res) => {

@@ -3,11 +3,7 @@ import { navigateTo } from '../components/./router.js';
 import { createFormValidator, email, required } from '../utils/validation.js';
 import { createElement } from '../utils/createElement.js';
 import { inputGroup } from './inputGroup.js';
-import {
-    getGithubAuthUrl,
-    getGoogleAuthUrl,
-    showLoggedInState,
-} from '../utils/authentication.js';
+import { showLoggedInState } from '../utils/authentication.js';
 
 export const login = () => {
     const inputs = [
@@ -102,12 +98,12 @@ export const login = () => {
             createElement('a', {
                 text: 'login with github',
                 classList: ['btn'],
-                href: getGithubAuthUrl(),
+                href: '/api/auth/login/github',
             }),
             createElement('a', {
                 text: 'login with google',
                 classList: ['btn'],
-                href: getGoogleAuthUrl(),
+                href: '/api/auth/login/google',
             }),
         ],
         events: {

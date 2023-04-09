@@ -67,24 +67,3 @@ export const showLoggedOutState = () => {
     profileLink.innerHTML = '';
     profileLink.parentElement.style.display = 'none';
 };
-
-const getRedirectUri = (provider) =>
-    `${BASE_URL}/api/auth/callback/${provider}`;
-
-export const getGithubAuthUrl = () => {
-    const url = new URL('https://github.com/login/oauth/authorize');
-    url.searchParams.append('client_id', GITHUB_CLIENT_ID);
-    url.searchParams.append('redirect_uri', getRedirectUri('github'));
-
-    return url.href;
-};
-
-export const getGoogleAuthUrl = () => {
-    const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-    url.searchParams.append('client_id', GOOGLE_CLIENT_ID);
-    url.searchParams.append('redirect_uri', getRedirectUri('google'));
-    url.searchParams.append('scope', 'openid email profile');
-    url.searchParams.append('response_type', 'code');
-
-    return url.href;
-};

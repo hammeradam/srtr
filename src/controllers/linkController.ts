@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
             name,
             url: req.body.url,
             password,
-            limit: req.body.limit || undefined,
+            limit: Number(req.body.limit) ?? undefined,
             userId: user?.id,
             hasAdvancedAnalytics:
                 req.body.hasAdvancedAnalytics === 'on' || false,
