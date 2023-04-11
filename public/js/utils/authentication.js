@@ -1,12 +1,5 @@
 import { REFRESH_TOKEN_PATH, sendRequest } from './sendRequest.js';
 
-// prettier-ignore
-const BASE_URL = 'http://localhost:3000';
-// prettier-ignore
-const GITHUB_CLIENT_ID = '9fd26d2f35d5520e4f3a';
-// prettier-ignore
-const GOOGLE_CLIENT_ID = '697090043703-5v8qd9p8efre0pdfo6s2c2ci5k9pld16.apps.googleusercontent.com';
-
 export const parseJwt = (token) => {
     if (!token) {
         return null;

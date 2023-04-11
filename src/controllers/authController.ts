@@ -8,7 +8,6 @@ import {
     sendRefreshToken,
     COOKIE_NAME,
 } from 'utils';
-import { ApplicationError } from 'errors';
 
 interface AuthBuilderProps {
     providers?: Router[];
@@ -32,7 +31,7 @@ export const authBuilder = ({ providers }: AuthBuilderProps) => {
             });
 
             if (!user || user.tokenVersion !== payload.tokenVersion) {
-                throw new ApplicationError('missing_refresh_token', 401);
+                return res.status(401).send('missing_refresh_token');
             }
 
             sendRefreshToken(res, createRefreshToken(user));
