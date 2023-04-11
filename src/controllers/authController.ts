@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import prisma, { Prisma, Token, User } from 'prisma';
+import prisma, { Token, User } from 'prisma';
 import {
     clearRefreshToken,
     createAccessToken,
@@ -15,39 +15,32 @@ export interface DatabaseAdapter {
         email,
         githubId,
         googleId,
-    }: {
-        id?: string;
-        email?: string;
-        githubId?: number;
-        googleId?: string;
-    }): Prisma.Prisma__UserClient<User | null, null>;
+    }: Partial<
+        Pick<User, 'id' | 'email' | 'githubId' | 'googleId'>
+    >): Promise<User | null>;
     updateUserPassword({
         id,
         password,
-    }: {
-        id: string;
-        password: string;
-    }): Prisma.Prisma__UserClient<User, never>;
+    }: Pick<User, 'id' | 'password'>): Promise<User | null>;
     createUser({
         email,
         password,
         name,
         githubId,
         googleId,
-    }: {
-        name?: string;
-        email?: string;
-        password?: string;
-        githubId?: number;
-        googleId?: string;
-    }): Prisma.Prisma__UserClient<User, never>;
+    }: Partial<
+        Pick<
+            User,
+            'id' | 'email' | 'password' | 'name' | 'githubId' | 'googleId'
+        >
+    >): Promise<User>;
     findToken({
         userId,
         type,
     }: {
         userId: string;
         type: 'reset-password' | 'login';
-    }): Prisma.Prisma__TokenClient<Token | null, null>;
+    }): Promise<Token | null>;
     createToken({
         token,
         userId,
@@ -56,14 +49,14 @@ export interface DatabaseAdapter {
         token: string;
         userId: string;
         type: 'reset-password' | 'login';
-    }): Prisma.Prisma__TokenClient<Token, never>;
+    }): Promise<Token>;
     deleteToken({
         userId,
         type,
     }: {
         userId: string;
         type: 'reset-password' | 'login';
-    }): Prisma.PrismaPromise<Prisma.BatchPayload>;
+    }): Promise<void>;
 }
 
 interface AuthBuilderProps {

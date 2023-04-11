@@ -97,14 +97,14 @@ export const prismaAdapter = () => {
         });
     };
 
-    const deleteToken = ({
+    const deleteToken = async ({
         userId,
         type,
     }: {
         userId: string;
         type: 'reset-password' | 'login';
     }) => {
-        return prisma.token.deleteMany({
+        await prisma.token.deleteMany({
             where: {
                 userId,
                 type,
