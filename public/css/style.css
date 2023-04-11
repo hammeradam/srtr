@@ -78,6 +78,8 @@ body {
 
 main {
     width: min-content;
+    max-width: 100%;
+    padding-inline: 0.5rem;
 }
 
 .card {
@@ -229,6 +231,10 @@ a:not(.btn):hover {
     #darkModeToggle {
         order: 1;
     }
+
+    .card {
+        padding-inline: 1rem;
+    }
 }
 
 .d-none {
@@ -239,6 +245,7 @@ a:not(.btn):hover {
     display: flex;
     flex-direction: column;
     position: relative;
+    max-width: 100%;
 }
 
 .form-group input {
