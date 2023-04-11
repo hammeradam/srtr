@@ -1,6 +1,5 @@
 import crypto from 'node:crypto';
 import express from 'express';
-import prisma from 'prisma';
 import { hash, compare } from 'bcrypt';
 import {
     buildMailHtml,
@@ -9,8 +8,9 @@ import {
     sendMail,
     sendRefreshToken,
 } from 'utils';
+import { DatabaseAdapter } from 'controllers/authController';
 
-export const credentialsProvider = () => {
+export const credentialsProvider = () => (adapter: DatabaseAdapter) => {
     const router = express.Router();
 
     router.post('/register', async (req, res) => {
@@ -20,17 +20,15 @@ export const credentialsProvider = () => {
             return res.status(400).send('All input is required');
         }
 
-        const existingUser = await prisma.user.findFirst({ where: { email } });
+        const existingUser = await adapter.findUser({ email });
 
         if (existingUser) {
             return res.status(409).send('User Already Exist. Please Login');
         }
 
-        const user = await prisma.user.create({
-            data: {
-                email,
-                password: await hash(password, 10),
-            },
+        const user = await adapter.createUser({
+            email,
+            password: await hash(password, 10),
         });
 
         const token = createAccessToken(user);
@@ -49,7 +47,7 @@ export const credentialsProvider = () => {
             return res.status(400).send('All input is required');
         }
 
-        const user = await prisma.user.findFirst({ where: { email } });
+        const user = await adapter.findUser({ email });
 
         if (!user || !(await compare(password, user.password!))) {
             return res.status(400).send('Invalid Credentials');
@@ -66,18 +64,12 @@ export const credentialsProvider = () => {
 
     router.post('/forgotten-password', async (req, res) => {
         const { email } = req.body;
-        const user = await prisma.user.findFirst({
-            where: {
-                email,
-            },
-        });
+        const user = await adapter.findUser({ email });
 
         if (user?.email) {
-            await prisma.token.deleteMany({
-                where: {
-                    userId: user.id,
-                    type: 'reset-password',
-                },
+            await adapter.deleteToken({
+                userId: user.id,
+                type: 'reset-password',
             });
 
             const token = crypto.randomBytes(32).toString('hex');
@@ -97,12 +89,10 @@ export const credentialsProvider = () => {
                 )
             );
 
-            await prisma.token.create({
-                data: {
-                    content: await hash(token, 10),
-                    userId: user.id,
-                    type: 'reset-password',
-                },
+            await adapter.createToken({
+                token,
+                userId: user.id,
+                type: 'reset-password',
             });
         }
 
@@ -111,11 +101,9 @@ export const credentialsProvider = () => {
 
     router.post('/reset-password', async (req, res) => {
         const { token, userId, password, passwordConfirm } = req.body;
-        const dbToken = await prisma.token.findFirst({
-            where: {
-                userId,
-                type: 'reset-password',
-            },
+        const dbToken = await adapter.findToken({
+            userId,
+            type: 'reset-password',
         });
 
         if (password !== passwordConfirm) {
@@ -128,23 +116,20 @@ export const credentialsProvider = () => {
             return res.status(400).end();
         }
 
-        const user = await prisma.user.findFirst({ where: { id: userId } });
+        const user = await adapter.findUser({ id: userId });
 
         if (!user) {
             return res.status(400).end();
         }
 
-        await prisma.user.update({
-            where: {
-                id: userId,
-            },
-            data: {
-                password: await hash(password, 10),
-            },
+        await adapter.updateUserPassword({
+            id: user.id,
+            password,
         });
 
-        await prisma.token.deleteMany({
-            where: { userId, type: 'reset-password' },
+        await adapter.deleteToken({
+            userId: user.id,
+            type: 'reset-password',
         });
 
         const newToken = createAccessToken(user);

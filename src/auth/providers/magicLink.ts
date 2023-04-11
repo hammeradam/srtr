@@ -1,6 +1,5 @@
 import crypto from 'node:crypto';
 import express from 'express';
-import prisma from 'prisma';
 import { hash, compare } from 'bcrypt';
 import {
     buildMailHtml,
@@ -8,25 +7,24 @@ import {
     sendMail,
     sendRefreshToken,
 } from 'utils';
+import { DatabaseAdapter } from 'controllers/authController';
 
-const findOrCreateByEmail = async (email: string) => {
-    const user = await prisma.user.findFirst({ where: { email } });
-
-    if (user) {
-        return user;
-    }
-
-    const newUser = await prisma.user.create({
-        data: {
-            email,
-        },
-    });
-
-    return newUser;
-};
-
-export const magicLinkProvider = () => {
+export const magicLinkProvider = () => (adapter: DatabaseAdapter) => {
     const router = express.Router();
+
+    const findOrCreateByEmail = async (email: string) => {
+        const user = await adapter.findUser({ email });
+
+        if (user) {
+            return user;
+        }
+
+        const newUser = await adapter.createUser({
+            email,
+        });
+
+        return newUser;
+    };
 
     router.post('/login/email', async (req, res) => {
         const { email } = req.body;
@@ -54,14 +52,10 @@ export const magicLinkProvider = () => {
             )
         );
 
-        const hashedToken = await hash(token, 10);
-
-        await prisma.token.create({
-            data: {
-                content: hashedToken,
-                userId: user.id,
-                type: 'login',
-            },
+        await adapter.createToken({
+            token,
+            userId: user.id,
+            type: 'login',
         });
 
         res.end();
@@ -74,24 +68,22 @@ export const magicLinkProvider = () => {
             return res.redirect('/error?code=400');
         }
 
-        const dbToken = await prisma.token.findFirst({
-            where: {
-                userId: userId,
-                type: 'login',
-            },
+        const dbToken = await adapter.findToken({
+            userId: userId,
+            type: 'login',
         });
 
         if (!dbToken || !compare(token.toString(), dbToken.content)) {
             return res.redirect('/error?code=400');
         }
 
-        const user = await prisma.user.findFirst({ where: { id: userId } });
+        const user = await adapter.findUser({ id: userId });
 
         if (!user) {
             return res.redirect('/error?code=400');
         }
 
-        await prisma.token.deleteMany({ where: { userId, type: 'login' } });
+        await adapter.deleteToken({ userId, type: 'login' });
 
         sendRefreshToken(res, createRefreshToken(user));
 

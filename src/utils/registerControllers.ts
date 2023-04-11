@@ -8,10 +8,13 @@ import { googleProvider } from 'auth/providers/google';
 import { credentialsProvider } from 'auth/providers/credentials';
 import { magicLinkProvider } from 'auth/providers/magicLink';
 
+import { prismaAdapter } from 'auth/adapters/prisma';
+
 export const registerControllers = (app: Express) => {
     app.use(
         '/api/auth',
         authBuilder({
+            adapter: prismaAdapter(),
             providers: [
                 githubProvider({
                     clientId: process.env.GITHUB_CLIENT_ID,

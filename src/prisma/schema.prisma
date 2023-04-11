@@ -48,7 +48,7 @@ model Token {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([userId])
+    @@index([userId, type])
 }
 
 model Analytics {

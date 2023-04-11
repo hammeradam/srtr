@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import prisma from 'prisma';
+import prisma, { Prisma, Token, User } from 'prisma';
 import {
     clearRefreshToken,
     createAccessToken,
@@ -9,11 +9,69 @@ import {
     COOKIE_NAME,
 } from 'utils';
 
-interface AuthBuilderProps {
-    providers?: Router[];
+export interface DatabaseAdapter {
+    findUser({
+        id,
+        email,
+        githubId,
+        googleId,
+    }: {
+        id?: string;
+        email?: string;
+        githubId?: number;
+        googleId?: string;
+    }): Prisma.Prisma__UserClient<User | null, null>;
+    updateUserPassword({
+        id,
+        password,
+    }: {
+        id: string;
+        password: string;
+    }): Prisma.Prisma__UserClient<User, never>;
+    createUser({
+        email,
+        password,
+        name,
+        githubId,
+        googleId,
+    }: {
+        name?: string;
+        email?: string;
+        password?: string;
+        githubId?: number;
+        googleId?: string;
+    }): Prisma.Prisma__UserClient<User, never>;
+    findToken({
+        userId,
+        type,
+    }: {
+        userId: string;
+        type: 'reset-password' | 'login';
+    }): Prisma.Prisma__TokenClient<Token | null, null>;
+    createToken({
+        token,
+        userId,
+        type,
+    }: {
+        token: string;
+        userId: string;
+        type: 'reset-password' | 'login';
+    }): Prisma.Prisma__TokenClient<Token, never>;
+    deleteToken({
+        userId,
+        type,
+    }: {
+        userId: string;
+        type: 'reset-password' | 'login';
+    }): Prisma.PrismaPromise<Prisma.BatchPayload>;
 }
 
-export const authBuilder = ({ providers }: AuthBuilderProps) => {
+interface AuthBuilderProps {
+    adapter: DatabaseAdapter;
+    providers?: Array<(adapter: DatabaseAdapter) => Router>;
+}
+
+export const authBuilder = ({ providers, adapter }: AuthBuilderProps) => {
     const router = express.Router();
 
     router.post('/refresh_token', async (req, res) => {
@@ -51,7 +109,7 @@ export const authBuilder = ({ providers }: AuthBuilderProps) => {
     });
 
     providers?.forEach((provider) => {
-        router.use(provider);
+        router.use(provider(adapter));
     });
 
     return router;
