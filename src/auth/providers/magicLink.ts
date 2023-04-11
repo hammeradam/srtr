@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import express from 'express';
-import { hash, compare } from 'bcrypt';
+import { compare } from 'bcrypt';
 import {
     buildMailHtml,
     createRefreshToken,
@@ -9,86 +9,92 @@ import {
 } from 'utils';
 import { DatabaseAdapter } from 'controllers/authController';
 
-export const magicLinkProvider = () => (adapter: DatabaseAdapter) => {
-    const router = express.Router();
+interface MagicLinkProviderOptions {
+    baseUrl: string;
+}
 
-    const findOrCreateByEmail = async (email: string) => {
-        const user = await adapter.findUser({ email });
+export const magicLinkProvider =
+    ({ baseUrl }: MagicLinkProviderOptions) =>
+    (adapter: DatabaseAdapter) => {
+        const router = express.Router();
 
-        if (user) {
-            return user;
-        }
+        const findOrCreateByEmail = async (email: string) => {
+            const user = await adapter.findUser({ email });
 
-        const newUser = await adapter.createUser({
-            email,
+            if (user) {
+                return user;
+            }
+
+            const newUser = await adapter.createUser({
+                email,
+            });
+
+            return newUser;
+        };
+
+        router.post('/login/email', async (req, res) => {
+            const { email } = req.body;
+
+            if (!email) {
+                return res.status(400).send('All input is required');
+            }
+
+            const user = await findOrCreateByEmail(email);
+
+            const token = crypto.randomBytes(32).toString('hex');
+            const url = new URL(
+                `/api/auth/callback/email?token=${token}&userId=${user.id}`,
+                baseUrl
+            );
+
+            await sendMail(
+                [user.email!],
+                'forgotten password',
+                buildMailHtml(
+                    'login',
+                    'you can log in by clicking the link below',
+                    'login',
+                    url.href
+                )
+            );
+
+            await adapter.createToken({
+                token,
+                userId: user.id,
+                type: 'login',
+            });
+
+            res.end();
         });
 
-        return newUser;
+        router.get('/callback/email', async (req, res) => {
+            const { token, userId } = req.query;
+
+            if (!token || !userId || typeof userId !== 'string') {
+                return res.redirect('/error?code=400');
+            }
+
+            const dbToken = await adapter.findToken({
+                userId: userId,
+                type: 'login',
+            });
+
+            if (!dbToken || !compare(token.toString(), dbToken.content)) {
+                return res.redirect('/error?code=400');
+            }
+
+            const user = await adapter.findUser({ id: userId });
+
+            if (!user) {
+                return res.redirect('/error?code=400');
+            }
+
+            await adapter.deleteToken({ userId, type: 'login' });
+
+            sendRefreshToken(res, createRefreshToken(user));
+
+            res.redirect('/');
+        });
+
+        return router;
     };
-
-    router.post('/login/email', async (req, res) => {
-        const { email } = req.body;
-
-        if (!email) {
-            return res.status(400).send('All input is required');
-        }
-
-        const user = await findOrCreateByEmail(email);
-
-        const token = crypto.randomBytes(32).toString('hex');
-        const url = new URL(
-            `/api/auth/callback/email?token=${token}&userId=${user.id}`,
-            process.env.BASE_URL
-        );
-
-        await sendMail(
-            [user.email!],
-            'forgotten password',
-            buildMailHtml(
-                'login',
-                'you can log in by clicking the link below',
-                'login',
-                url.href
-            )
-        );
-
-        await adapter.createToken({
-            token,
-            userId: user.id,
-            type: 'login',
-        });
-
-        res.end();
-    });
-
-    router.get('/callback/email', async (req, res) => {
-        const { token, userId } = req.query;
-
-        if (!token || !userId || typeof userId !== 'string') {
-            return res.redirect('/error?code=400');
-        }
-
-        const dbToken = await adapter.findToken({
-            userId: userId,
-            type: 'login',
-        });
-
-        if (!dbToken || !compare(token.toString(), dbToken.content)) {
-            return res.redirect('/error?code=400');
-        }
-
-        const user = await adapter.findUser({ id: userId });
-
-        if (!user) {
-            return res.redirect('/error?code=400');
-        }
-
-        await adapter.deleteToken({ userId, type: 'login' });
-
-        sendRefreshToken(res, createRefreshToken(user));
-
-        res.redirect('/');
-    });
-
-    return router;
-};

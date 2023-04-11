@@ -17,15 +17,21 @@ export const registerControllers = (app: Express) => {
             adapter: prismaAdapter(),
             providers: [
                 githubProvider({
+                    baseUrl: process.env.BASE_URL,
                     clientId: process.env.GITHUB_CLIENT_ID,
                     clientSecret: process.env.GITHUB_CLIENT_SECRET,
                 }),
                 googleProvider({
+                    baseUrl: process.env.BASE_URL,
                     clientId: process.env.GOOGLE_CLIENT_ID,
                     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
                 }),
-                credentialsProvider(),
-                magicLinkProvider(),
+                credentialsProvider({
+                    baseUrl: process.env.BASE_URL,
+                }),
+                magicLinkProvider({
+                    baseUrl: process.env.BASE_URL,
+                }),
             ],
         })
     );

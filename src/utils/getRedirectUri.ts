@@ -1,4 +1,4 @@
-export const getRedirectUri = (provider: string) => {
-    const url = new URL(`/api/auth/callback/${provider}`, process.env.BASE_URL);
+export const getRedirectUri = (baseUrl: string, provider: string) => {
+    const url = new URL(`/api/auth/callback/${provider}`, baseUrl);
     return url.href;
 };

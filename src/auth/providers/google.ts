@@ -9,16 +9,19 @@ const GOOGLE_USER_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
 export interface GoogleProviderOptions {
     clientId: string;
     clientSecret: string;
+    baseUrl: string;
 }
 
 export const googleProvider =
-    ({ clientId, clientSecret }: GoogleProviderOptions) =>
+    ({ clientId, clientSecret, baseUrl }: GoogleProviderOptions) =>
     (adapter: DatabaseAdapter) => {
         interface GetGoogleAccessTokenOptions {
             code: string;
             clientId: string;
             clientSecret: string;
         }
+
+        const redirectUri = getRedirectUri(baseUrl, 'google');
 
         const getGoogleAccessToken = async ({
             code,
@@ -29,7 +32,7 @@ export const googleProvider =
                 client_id: clientId,
                 client_secret: clientSecret,
                 grant_type: 'authorization_code',
-                redirect_uri: getRedirectUri('google'),
+                redirect_uri: redirectUri,
                 code,
             });
 
@@ -85,7 +88,7 @@ export const googleProvider =
         router.get('/login/google', async (_req, res) => {
             const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
             url.searchParams.append('client_id', clientId);
-            url.searchParams.append('redirect_uri', getRedirectUri('google'));
+            url.searchParams.append('redirect_uri', redirectUri);
             url.searchParams.append('scope', 'openid email profile');
             url.searchParams.append('response_type', 'code');
 

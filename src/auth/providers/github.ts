@@ -7,18 +7,21 @@ const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
 const GITHUB_USER_URL = 'https://api.github.com/user';
 
 export interface GithubProviderOptions {
+    baseUrl: string;
     clientId: string;
     clientSecret: string;
 }
 
 export const githubProvider =
-    ({ clientId, clientSecret }: GithubProviderOptions) =>
+    ({ clientId, clientSecret, baseUrl }: GithubProviderOptions) =>
     (adapter: DatabaseAdapter) => {
         interface GetGithubAccessTokenOptions {
             code: string;
             clientId: string;
             clientSecret: string;
         }
+
+        const redirectUri = getRedirectUri(baseUrl, 'google');
 
         const getGithubAccessToken = async ({
             code,
@@ -80,7 +83,7 @@ export const githubProvider =
         router.get('/login/github', async (_req, res) => {
             const url = new URL('https://github.com/login/oauth/authorize');
             url.searchParams.append('client_id', clientId);
-            url.searchParams.append('redirect_uri', getRedirectUri('github'));
+            url.searchParams.append('redirect_uri', redirectUri);
 
             res.redirect(url.href);
         });
