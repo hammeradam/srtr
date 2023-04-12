@@ -19,7 +19,7 @@ export const logout = (options) => {
 
                         navigateTo('');
                         showLoggedOutState();
-                        window.accessToken = '';
+                        window.accessToken = null;
                     },
                 },
             }),

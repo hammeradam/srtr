@@ -33,7 +33,7 @@ export const checkLogin = async () => {
         return;
     }
 
-    window.accessToken = '';
+    window.accessToken = null;
 };
 
 export const showLoggedInState = (user) => {
