@@ -1,7 +1,7 @@
 import express from 'express';
-import axios from 'axios';
 import { createRefreshToken, sendRefreshToken, getRedirectUri } from 'utils';
 import { DatabaseAdapter } from 'controllers/authController';
+import { get, post } from 'utils/request';
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USER_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
@@ -28,25 +28,23 @@ export const googleProvider =
             clientId,
             clientSecret,
         }: GetGoogleAccessTokenOptions): Promise<string> => {
-            const params = new URLSearchParams({
-                client_id: clientId,
-                client_secret: clientSecret,
-                grant_type: 'authorization_code',
-                redirect_uri: redirectUri,
-                code,
-            });
-
-            const response = await axios.post(
+            const response = await post<{ access_token: string }>(
                 GOOGLE_TOKEN_URL,
-                params.toString(),
                 {
                     headers: {
                         Accept: 'application/x-www-form-urlencoded',
                     },
+                    body: {
+                        client_id: clientId,
+                        client_secret: clientSecret,
+                        grant_type: 'authorization_code',
+                        redirect_uri: redirectUri,
+                        code,
+                    },
                 }
             );
 
-            return response.data.access_token;
+            return response.access_token;
         };
 
         interface GoogleData {
@@ -58,13 +56,13 @@ export const googleProvider =
         const getGoogleUserDetails = async (
             accessToken: string
         ): Promise<GoogleData> => {
-            const response = await axios.get<GoogleData>(GOOGLE_USER_URL, {
+            const response = await get<GoogleData>(GOOGLE_USER_URL, {
                 headers: {
                     Authorization: 'Bearer ' + accessToken,
                 },
             });
 
-            return response.data;
+            return response;
         };
 
         const findOrCreateGoogleUser = async (data: GoogleData) => {

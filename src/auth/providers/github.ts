@@ -1,7 +1,7 @@
 import express from 'express';
-import axios from 'axios';
 import { createRefreshToken, sendRefreshToken, getRedirectUri } from 'utils';
 import { DatabaseAdapter } from 'controllers/authController';
+import { get, post } from 'utils/request';
 
 const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
 const GITHUB_USER_URL = 'https://api.github.com/user';
@@ -28,9 +28,8 @@ export const githubProvider =
             clientId,
             clientSecret,
         }: GetGithubAccessTokenOptions): Promise<string> => {
-            const response = await axios.post(
+            const response = await post<{ access_token: string }>(
                 GITHUB_TOKEN_URL,
-                {},
                 {
                     params: {
                         client_id: clientId,
@@ -43,7 +42,7 @@ export const githubProvider =
                 }
             );
 
-            return response.data.access_token;
+            return response.access_token;
         };
 
         interface GithubData {
@@ -53,13 +52,13 @@ export const githubProvider =
         }
 
         const getGithubUserDetails = async (accessToken: string) => {
-            const response = await axios.get<GithubData>(GITHUB_USER_URL, {
+            const response = await get<GithubData>(GITHUB_USER_URL, {
                 headers: {
                     Authorization: 'token ' + accessToken,
                 },
             });
 
-            return response.data;
+            return response;
         };
 
         const findOrCreateGithubUser = async (data: GithubData) => {
