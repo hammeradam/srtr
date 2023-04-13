@@ -21,6 +21,13 @@ html.dark {
     --text: #fff;
 }
 
+@media (prefers-color-scheme: dark) {
+    html:not(.light) {
+        --background: #160522;
+        --text: #fff;
+    }
+}
+
 #darkModeToggle button {
     box-shadow: none;
     background-color: transparent;

@@ -8,11 +8,18 @@ export const themeToggle = () => {
         children: [sun(), moon()],
         events: {
             click: () => {
-                document.documentElement.classList.toggle('dark');
-                localStorage.setItem(
-                    'isDark',
-                    document.documentElement.classList.contains('dark')
-                );
+                const wasDark =
+                    document.documentElement.classList.contains('dark');
+
+                if (wasDark) {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                }
+
+                localStorage.setItem('isDark', !wasDark);
             },
         },
     });
