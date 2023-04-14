@@ -21,7 +21,7 @@ export const githubProvider =
             clientSecret: string;
         }
 
-        const redirectUri = getRedirectUri(baseUrl, 'google');
+        const redirectUri = getRedirectUri(baseUrl, 'github');
 
         const getGithubAccessToken = async ({
             code,
