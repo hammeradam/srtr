@@ -68,15 +68,22 @@ export const router = () => {
             `[href="${window.location.pathname}"]`
         );
 
-        if (navItem) {
-            navItem.classList.add('active');
-        }
+        navItem?.classList.add('active');
     });
 
     window.addEventListener('popstate', () => {
         navigateTo(window.location.pathname.substring(1), null, {
             pushState: false,
         });
+
+        const navItem = document.querySelector(
+            `[href="${window.location.pathname}"]`
+        );
+
+        document
+            .querySelectorAll('nav li a')
+            .forEach((item) => item.classList.remove('active'));
+        navItem?.classList.add('active');
     });
 
     return createElement('main');
