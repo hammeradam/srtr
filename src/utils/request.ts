@@ -35,6 +35,7 @@ export async function post<T>(
     );
 
     if (!response.ok) {
+        console.log(response);
         throw new Error('ASD');
     }
 

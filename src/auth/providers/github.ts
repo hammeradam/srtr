@@ -42,6 +42,8 @@ export const githubProvider =
                 }
             );
 
+            console.log(response);
+
             return response.access_token;
         };
 
@@ -111,7 +113,9 @@ export const githubProvider =
                 clientSecret,
             });
             const userData = await getGithubUserDetails(accessToken);
+            console.log(userData);
             const user = await findOrCreateGithubUser(userData);
+            console.log(user);
 
             sendRefreshToken(res, createRefreshToken(user));
 
