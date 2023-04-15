@@ -32,9 +32,19 @@ export const credentialsProvider =
                 return res.status(409).send('User Already Exist. Please Login');
             }
 
-            const user = await adapter.createUser({
-                email,
-                password: await hash(password, 10),
+            let user = await adapter.findUser({ email });
+
+            if (!user) {
+                user = await adapter.createUser({
+                    email,
+                });
+            }
+
+            await adapter.createAuthMethod({
+                type: 'credentials',
+                value: email,
+                userId: user.id,
+                secret: await hash(password, 10),
             });
 
             const token = createAccessToken(user);
@@ -53,18 +63,21 @@ export const credentialsProvider =
                 return res.status(400).send('All input is required');
             }
 
-            const user = await adapter.findUser({ email });
+            const result = await adapter.findAuthMethod({
+                type: 'credentials',
+                value: email,
+            });
 
-            if (!user || !(await compare(password, user.password!))) {
+            if (!result || !(await compare(password, result.secret!))) {
                 return res.status(400).send('Invalid Credentials');
             }
 
-            const token = createAccessToken(user);
-            sendRefreshToken(res, createRefreshToken(user));
+            const token = createAccessToken(result.user);
+            sendRefreshToken(res, createRefreshToken(result.user));
 
             res.json({
                 token,
-                user: user.name || user.email,
+                user: result.user.name || result.user.email,
             });
         });
 
@@ -128,10 +141,15 @@ export const credentialsProvider =
                 return res.status(400).end();
             }
 
-            await adapter.updateUserPassword({
-                id: user.id,
-                password,
-            });
+            await adapter.updateAuthMethod(
+                {
+                    type: 'credentials',
+                    userId: user.id,
+                },
+                {
+                    secret: await hash(password, 10),
+                }
+            );
 
             await adapter.deleteToken({
                 userId: user.id,

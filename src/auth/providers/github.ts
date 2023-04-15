@@ -62,19 +62,36 @@ export const githubProvider =
         };
 
         const findOrCreateGithubUser = async (data: GithubData) => {
-            const user = await adapter.findUser({ githubId: data.id });
-
-            if (user) {
-                return user;
-            }
-
-            const newUser = await adapter.createUser({
-                githubId: data.id,
-                name: data.login,
-                email: data?.email,
+            const result = await adapter.findAuthMethod({
+                type: 'github',
+                value: String(data.id),
             });
 
-            return newUser;
+            if (result) {
+                return result.user;
+            }
+
+            let user = await adapter.findUser({ email: data?.email });
+
+            if (!user) {
+                user = await adapter.createUser({
+                    name: data.login,
+                    email: data?.email,
+                });
+            }
+
+            if (!user.name && data.login) {
+                await adapter.updateUser(user.id, { name: data.login });
+            }
+
+            await adapter.createAuthMethod({
+                type: 'github',
+                value: String(data.id),
+                userId: user.id,
+                secret: null,
+            });
+
+            return user;
         };
 
         const router = express.Router();

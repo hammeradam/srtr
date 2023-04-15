@@ -17,10 +17,17 @@ export const navigateTo = async (path, props, options) => {
     const main = document.querySelector('body main');
 
     if (options?.pushState !== false) {
-        history.pushState(null, null, `/${path}`);
+        history.pushState(null, null, `${window.location.origin}/${path}`);
     }
 
     main.innerHTML = '';
+
+    const navItem = document.querySelector(`[href="/${path}"]`);
+
+    document
+        .querySelectorAll('nav li a')
+        .forEach((item) => item.classList.remove('active'));
+    navItem?.classList.add('active');
 
     const component = await getComponent(path)(props);
     if (component) {
@@ -64,26 +71,12 @@ export const router = () => {
         navigateTo(window.location.pathname.substring(1), null, {
             pushState: false,
         });
-        const navItem = document.querySelector(
-            `[href="${window.location.pathname}"]`
-        );
-
-        navItem?.classList.add('active');
     });
 
     window.addEventListener('popstate', () => {
         navigateTo(window.location.pathname.substring(1), null, {
             pushState: false,
         });
-
-        const navItem = document.querySelector(
-            `[href="${window.location.pathname}"]`
-        );
-
-        document
-            .querySelectorAll('nav li a')
-            .forEach((item) => item.classList.remove('active'));
-        navItem?.classList.add('active');
     });
 
     return createElement('main');

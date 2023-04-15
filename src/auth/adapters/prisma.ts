@@ -1,65 +1,66 @@
 import { hashSync } from 'bcrypt';
+import { DatabaseAdapter } from 'controllers/authController';
 import prisma from 'prisma';
 
-export const prismaAdapter = () => {
-    const findUser = ({
-        id,
-        email,
-        githubId,
-        googleId,
-    }: {
-        id?: string;
-        email?: string;
-        githubId?: number;
-        googleId?: string;
-    }) => {
+export const prismaAdapter = (): DatabaseAdapter => {
+    const findUser = (where: { id?: string; email?: string }) => {
         return prisma.user.findFirst({
-            where: {
-                id,
-                email,
-                githubId,
-                googleId,
-            },
+            where,
         });
     };
 
-    const createUser = ({
-        email,
-        password,
-        name,
-        githubId,
-        googleId,
-    }: {
-        name?: string;
-        email?: string;
-        password?: string;
-        githubId?: number;
-        googleId?: string;
-    }) => {
+    const createUser = (data: { name?: string; email?: string }) => {
         return prisma.user.create({
-            data: {
-                name,
-                email,
-                password: password && hashSync(password, 10),
-                githubId,
-                googleId,
-            },
+            data,
         });
     };
 
-    const updateUserPassword = ({
-        id,
-        password,
-    }: {
-        id: string;
-        password: string;
-    }) => {
+    const updateUser = (
+        id: string,
+        data: { name?: string; email?: string }
+    ) => {
         return prisma.user.update({
             where: {
                 id,
             },
-            data: {
-                password: hashSync(password, 10),
+            data,
+        });
+    };
+
+    const findAuthMethod = (where: { type: string; value: string }) => {
+        return prisma.authMethod.findFirst({
+            where,
+            include: {
+                user: true,
+            },
+        });
+    };
+
+    const createAuthMethod = (data: {
+        type: string;
+        value: string;
+        userId: string;
+        secret: string | null;
+    }) => {
+        return prisma.authMethod.create({
+            data,
+        });
+    };
+
+    const updateAuthMethod = (
+        where: {
+            type: string;
+            userId: string;
+        },
+        data: {
+            value?: string;
+            secret?: string | null;
+        }
+    ) => {
+        return prisma.authMethod.update({
+            data,
+            where: {
+                type_userId: where,
             },
         });
     };
@@ -82,40 +83,31 @@ export const prismaAdapter = () => {
         });
     };
 
-    const findToken = ({
-        userId,
-        type,
-    }: {
+    const findToken = (where: {
         userId: string;
         type: 'reset-password' | 'login';
     }) => {
         return prisma.token.findFirst({
-            where: {
-                userId,
-                type,
-            },
+            where,
         });
     };
 
-    const deleteToken = async ({
-        userId,
-        type,
-    }: {
+    const deleteToken = async (where: {
         userId: string;
         type: 'reset-password' | 'login';
     }) => {
         await prisma.token.deleteMany({
-            where: {
-                userId,
-                type,
-            },
+            where,
         });
     };
 
     return {
-        findUser,
         createUser,
-        updateUserPassword,
+        findUser,
+        updateUser,
+        createAuthMethod,
+        findAuthMethod,
+        updateAuthMethod,
         createToken,
         findToken,
         deleteToken,

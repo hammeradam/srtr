@@ -1,7 +1,7 @@
 export const REFRESH_TOKEN_PATH = '/api/auth/refresh_token';
 
 export const sendRequest = async (path, options) => {
-    const request = await fetch(path, {
+    const response = await fetch(path, {
         credentials: 'include',
         ...options,
         headers: {
@@ -10,7 +10,7 @@ export const sendRequest = async (path, options) => {
         },
     });
 
-    if (request.status === 401 && path !== REFRESH_TOKEN_PATH) {
+    if (response.status === 401 && path !== REFRESH_TOKEN_PATH) {
         const tokenRequest = await fetch(REFRESH_TOKEN_PATH, {
             method: 'POST',
         });
@@ -30,5 +30,5 @@ export const sendRequest = async (path, options) => {
         }
     }
 
-    return request;
+    return response;
 };

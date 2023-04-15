@@ -66,19 +66,36 @@ export const googleProvider =
         };
 
         const findOrCreateGoogleUser = async (data: GoogleData) => {
-            const user = await adapter.findUser({ googleId: data.id });
-
-            if (user) {
-                return user;
-            }
-
-            const newUser = await adapter.createUser({
-                googleId: data.id,
-                name: data.name,
-                email: data.email,
+            const result = await adapter.findAuthMethod({
+                type: 'google',
+                value: String(data.id),
             });
 
-            return newUser;
+            if (result) {
+                return result.user;
+            }
+
+            let user = await adapter.findUser({ email: data?.email });
+
+            if (!user) {
+                user = await adapter.createUser({
+                    name: data.name,
+                    email: data?.email,
+                });
+            }
+
+            if (!user.name && data.name) {
+                await adapter.updateUser(user.id, { name: data.name });
+            }
+
+            await adapter.createAuthMethod({
+                type: 'google',
+                value: data.id,
+                userId: user.id,
+                secret: null,
+            });
+
+            return user;
         };
 
         const router = express.Router();

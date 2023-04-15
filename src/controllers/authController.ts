@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import prisma, { Token, User } from 'prisma';
+import prisma, { AuthMethod, Token, User } from 'prisma';
 import {
     clearRefreshToken,
     createAccessToken,
@@ -10,30 +10,30 @@ import {
 } from 'utils';
 
 export interface DatabaseAdapter {
-    findUser({
-        id,
-        email,
-        githubId,
-        googleId,
-    }: Partial<
-        Pick<User, 'id' | 'email' | 'githubId' | 'googleId'>
-    >): Promise<User | null>;
-    updateUserPassword({
-        id,
-        password,
-    }: Pick<User, 'id' | 'password'>): Promise<User | null>;
-    createUser({
-        email,
-        password,
-        name,
-        githubId,
-        googleId,
-    }: Partial<
-        Pick<
-            User,
-            'id' | 'email' | 'password' | 'name' | 'githubId' | 'googleId'
-        >
-    >): Promise<User>;
+    findUser(params: Partial<Pick<User, 'id' | 'email'>>): Promise<User | null>;
+    createUser(
+        params: Partial<Pick<User, 'id' | 'email' | 'name'>>
+    ): Promise<User>;
+    findAuthMethod(params: Pick<AuthMethod, 'type' | 'value'>): Promise<
+        | (AuthMethod & {
+              user: User;
+          })
+        | null
+    >;
+    updateUser(
+        id: string,
+        data: {
+            name?: string;
+            email?: string;
+        }
+    ): Promise<User>;
+    createAuthMethod: (
+        params: Pick<AuthMethod, 'type' | 'value' | 'userId' | 'secret'>
+    ) => Promise<AuthMethod | null>;
+    updateAuthMethod: (
+        where: Pick<AuthMethod, 'type' | 'userId'>,
+        data: Partial<Pick<AuthMethod, 'value' | 'secret'>>
+    ) => Promise<AuthMethod | null>;
     findToken({
         userId,
         type,
@@ -70,6 +70,11 @@ export const authBuilder = ({ providers, adapter }: AuthBuilderProps) => {
     router.post('/refresh_token', async (req, res) => {
         try {
             const token = req.cookies[COOKIE_NAME];
+
+            if (!token) {
+                return res.status(401).send('missing_refresh_token');
+            }
+
             const payload = jwt.verify(
                 token,
                 process.env.TOKEN_SECRET
@@ -82,7 +87,7 @@ export const authBuilder = ({ providers, adapter }: AuthBuilderProps) => {
             });
 
             if (!user || user.tokenVersion !== payload.tokenVersion) {
-                return res.status(401).send('missing_refresh_token');
+                return res.status(401).send('invalid_refresh_token');
             }
 
             sendRefreshToken(res, createRefreshToken(user));

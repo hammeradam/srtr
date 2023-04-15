@@ -25,9 +25,15 @@ export const checkLogin = async () => {
         method: 'POST',
     });
 
+    if (!request.ok) {
+        window.accessToken = null;
+
+        return;
+    }
+
     const response = await request.json();
 
-    if (request.ok && response.token) {
+    if (response.token) {
         window.accessToken = response.token;
 
         return;

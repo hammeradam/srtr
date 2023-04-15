@@ -19,7 +19,5 @@ export const getPaginationParams = (req: Request): PaginationOptions => {
         paginationOptions.skip = pageNumber * paginationOptions.take;
     }
 
-    console.log({ paginationOptions });
-
     return paginationOptions;
 };
