@@ -1,12 +1,13 @@
 import express, { Router } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import prisma, { AuthMethod, Token, User } from 'prisma';
+import { AuthMethod, Token, User } from 'prisma';
 import {
     clearRefreshToken,
     createAccessToken,
     createRefreshToken,
     sendRefreshToken,
     COOKIE_NAME,
+    getLoggedInUser,
 } from 'utils';
 
 export interface DatabaseAdapter {
@@ -22,10 +23,7 @@ export interface DatabaseAdapter {
     >;
     updateUser(
         id: string,
-        data: {
-            name?: string;
-            email?: string;
-        }
+        data: Partial<Pick<User, 'name' | 'email' | 'tokenVersion'>>
     ): Promise<User>;
     createAuthMethod: (
         params: Pick<AuthMethod, 'type' | 'value' | 'userId' | 'secret'>
@@ -80,10 +78,8 @@ export const authBuilder = ({ providers, adapter }: AuthBuilderProps) => {
                 process.env.TOKEN_SECRET
             ) as JwtPayload;
 
-            const user = await prisma.user.findFirst({
-                where: {
-                    id: payload.userId,
-                },
+            const user = await adapter.findUser({
+                id: payload.userId,
             });
 
             if (!user || user.tokenVersion !== payload.tokenVersion) {
@@ -101,8 +97,16 @@ export const authBuilder = ({ providers, adapter }: AuthBuilderProps) => {
         }
     });
 
-    router.post('/logout', (_req, res) => {
+    router.post('/logout', async (req, res) => {
         clearRefreshToken(res);
+        const user = await getLoggedInUser(req);
+
+        if (user && req.query.all === 'true') {
+            await adapter.updateUser(user.id, {
+                tokenVersion: user.tokenVersion + 1,
+            });
+        }
+
         return res.end();
     });
 

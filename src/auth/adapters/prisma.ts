@@ -17,7 +17,7 @@ export const prismaAdapter = (): DatabaseAdapter => {
 
     const updateUser = (
         id: string,
-        data: { name?: string; email?: string }
+        data: { name?: string; email?: string; tokenVersion?: number }
     ) => {
         return prisma.user.update({
             where: {
