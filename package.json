@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon",
-        "start": "ts-node --files -r tsconfig-paths/register ./src/index.ts",
+        "dev": "tsx watch src",
+        "start": "tsx src",
         "postinstall": "npm run prisma:generate",
         "prettier": "prettier ./src --write",
         "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
@@ -29,8 +29,7 @@
         "jsonwebtoken": "^9.0.0",
         "nodemailer": "^6.9.1",
         "prisma": "^4.12.0",
-        "ts-node": "^10.9.1",
-        "tsconfig-paths": "^4.2.0",
+        "tsx": "^3.12.6",
         "ua-parser-js": "^1.0.35",
         "zod": "^3.21.4"
     },
@@ -44,7 +43,6 @@
         "@types/node": "^18.15.11",
         "@types/nodemailer": "^6.4.7",
         "@types/ua-parser-js": "^0.7.36",
-        "nodemon": "^2.0.22",
         "prettier": "^2.8.7",
         "typescript": "^5.0.4"
     }
