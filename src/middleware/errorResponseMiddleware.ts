@@ -6,6 +6,12 @@ export const errorResponseMiddleware: ErrorRequestHandler = (
     res,
     __
 ) => {
+    if (error.issues) {
+        return res.status(400).json({
+            message: 'Validation failed',
+            issues: error.issues,
+        });
+    }
     const status = error.statusCode || 500;
     const message =
         (process.env.NODE_ENV !== 'production' && error.message) ||

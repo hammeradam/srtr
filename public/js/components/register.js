@@ -8,7 +8,7 @@ import {
     required,
 } from '../utils/validation.js';
 import { inputGroup } from './inputGroup.js';
-import { showLoggedInState } from '../utils/authentication.js';
+import { success } from '../utils/notifications.js';
 
 export const register = () => {
     const inputs = [
@@ -54,9 +54,9 @@ export const register = () => {
         });
 
         if (request.ok) {
-            const response = await request.json();
-            showLoggedInState(response.user);
-            navigateTo('');
+            success({
+                content: 'jeeee',
+            });
         }
     };
 

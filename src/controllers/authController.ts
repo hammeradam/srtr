@@ -13,7 +13,7 @@ import {
 export interface DatabaseAdapter {
     findUser(params: Partial<Pick<User, 'id' | 'email'>>): Promise<User | null>;
     createUser(
-        params: Partial<Pick<User, 'id' | 'email' | 'name'>>
+        params: Partial<Pick<User, 'id' | 'email' | 'name' | 'verified'>>
     ): Promise<User>;
     findAuthMethod(params: Pick<AuthMethod, 'type' | 'value'>): Promise<
         | (AuthMethod & {
@@ -23,7 +23,9 @@ export interface DatabaseAdapter {
     >;
     updateUser(
         id: string,
-        data: Partial<Pick<User, 'name' | 'email' | 'tokenVersion'>>
+        data: Partial<
+            Pick<User, 'name' | 'email' | 'tokenVersion' | 'verified'>
+        >
     ): Promise<User>;
     createAuthMethod: (
         params: Pick<AuthMethod, 'type' | 'value' | 'userId' | 'secret'>
@@ -37,7 +39,7 @@ export interface DatabaseAdapter {
         type,
     }: {
         userId: string;
-        type: 'reset-password' | 'login';
+        type: 'reset-password' | 'login' | 'verify';
     }): Promise<Token | null>;
     createToken({
         token,
@@ -46,14 +48,14 @@ export interface DatabaseAdapter {
     }: {
         token: string;
         userId: string;
-        type: 'reset-password' | 'login';
+        type: 'reset-password' | 'login' | 'verify';
     }): Promise<Token>;
     deleteToken({
         userId,
         type,
     }: {
         userId: string;
-        type: 'reset-password' | 'login';
+        type: 'reset-password' | 'login' | 'verify';
     }): Promise<void>;
 }
 

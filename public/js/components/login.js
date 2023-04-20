@@ -51,6 +51,7 @@ export const login = () => {
         if (request.ok) {
             const response = await request.json();
             showLoggedInState(response.user);
+            window.accessToken = response.token;
             navigateTo('');
         }
     };

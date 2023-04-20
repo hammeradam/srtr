@@ -3,21 +3,46 @@ import { DatabaseAdapter } from 'controllers/authController';
 import prisma from 'prisma';
 
 export const prismaAdapter = (): DatabaseAdapter => {
-    const findUser = (where: { id?: string; email?: string }) => {
+    const findUser = ({
+        id,
+        email,
+        verified,
+    }: {
+        id?: string;
+        email?: string;
+        verified?: boolean;
+    }) => {
         return prisma.user.findFirst({
-            where,
+            where: {
+                id,
+                email,
+                verified,
+            },
         });
     };
 
-    const createUser = (data: { name?: string; email?: string }) => {
+    const createUser = ({
+        name,
+        email,
+        verified = true,
+    }: {
+        name?: string;
+        email?: string;
+        verified?: boolean;
+    }) => {
         return prisma.user.create({
-            data,
+            data: { name, email, verified },
         });
     };
 
     const updateUser = (
         id: string,
-        data: { name?: string; email?: string; tokenVersion?: number }
+        data: {
+            name?: string;
+            email?: string;
+            tokenVersion?: number;
+            verified?: boolean;
+        }
     ) => {
         return prisma.user.update({
             where: {

@@ -9,10 +9,26 @@ import {
     sendRefreshToken,
 } from 'utils';
 import { DatabaseAdapter } from 'controllers/authController';
-
+import z from 'zod';
 interface CredentialsProviderOptions {
     baseUrl: string;
 }
+
+const resetPasswordSchema = z
+    .object({
+        token: z.string(),
+        userId: z.string(),
+        password: z.string().min(5, 'Password must be at least 5 characters'),
+        passwordConfirm: z.string(),
+    })
+    .superRefine((data, ctx) => {
+        if (data.password !== data.passwordConfirm) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Passwords do not match',
+            });
+        }
+    });
 
 export const credentialsProvider =
     ({ baseUrl }: CredentialsProviderOptions) =>
@@ -37,6 +53,7 @@ export const credentialsProvider =
             if (!user) {
                 user = await adapter.createUser({
                     email,
+                    verified: false,
                 });
             }
 
@@ -47,13 +64,61 @@ export const credentialsProvider =
                 secret: await hash(password, 10),
             });
 
-            const token = createAccessToken(user);
+            const token = crypto.randomBytes(32).toString('hex');
+            const url = new URL(
+                `api/auth/verify?token=${token}&userId=${user.id}`,
+                baseUrl
+            );
+
+            await adapter.createToken({
+                token: await hash(token, 10),
+                userId: user.id,
+                type: 'verify',
+            });
+
+            sendMail(
+                [email],
+                'welcome',
+                buildMailHtml('welcome', 'welcome', 'verify', url.href)
+            );
+
+            res.status(201).end();
+        });
+
+        router.get('/verify', async (req, res) => {
+            const { token, userId } = req.query;
+
+            if (typeof token !== 'string' || typeof userId !== 'string') {
+                return res.status(400).end();
+            }
+
+            const dbToken = await adapter.findToken({
+                userId: userId as string,
+                type: 'verify',
+            });
+
+            if (!dbToken || !compare(token as string, dbToken.content)) {
+                return res.status(400).end();
+            }
+
+            await adapter.updateUser(userId as string, {
+                verified: true,
+            });
+
+            await adapter.deleteToken({
+                userId: userId as string,
+                type: 'verify',
+            });
+
+            const user = await adapter.findUser({ id: userId });
+
+            if (!user) {
+                return res.status(400).end();
+            }
+
             sendRefreshToken(res, createRefreshToken(user));
 
-            res.json({
-                token,
-                user: user.name || user.email,
-            });
+            res.redirect('/');
         });
 
         router.post('/login', async (req, res) => {
@@ -97,6 +162,12 @@ export const credentialsProvider =
                     baseUrl
                 );
 
+                await adapter.createToken({
+                    token: await hash(token, 10),
+                    userId: user.id,
+                    type: 'reset-password',
+                });
+
                 await sendMail(
                     [user.email],
                     'forgotten password',
@@ -107,19 +178,15 @@ export const credentialsProvider =
                         url.href
                     )
                 );
-
-                await adapter.createToken({
-                    token,
-                    userId: user.id,
-                    type: 'reset-password',
-                });
             }
 
             res.end();
         });
 
         router.post('/reset-password', async (req, res) => {
-            const { token, userId, password, passwordConfirm } = req.body;
+            const { token, userId, password, passwordConfirm } =
+                resetPasswordSchema.parse(req.body);
+
             const dbToken = await adapter.findToken({
                 userId,
                 type: 'reset-password',

@@ -1,7 +1,10 @@
+import { showLoggedInState } from '../utils/authentication.js';
 import { createElement } from '../utils/createElement.js';
 import { getQueryParam } from '../utils/getQueryParam.js';
+import { sendRequest } from '../utils/sendRequest.js';
 import { equals, required, createFormValidator } from '../utils/validation.js';
 import { inputGroup } from './inputGroup.js';
+import { navigateTo } from './router.js';
 
 export const resetPassword = () => {
     const inputs = [
@@ -34,13 +37,13 @@ export const resetPassword = () => {
     const submit = async (event) => {
         event.preventDefault();
 
-        if (!validate(event.srcElement)) {
-            return;
-        }
+        // if (!validate(event.srcElement)) {
+        //     return;
+        // }
 
         const userId = getQueryParam('userId');
         const token = getQueryParam('token');
-
+        console.log(userId, token);
         const request = await sendRequest('/api/auth/reset-password', {
             method: 'POST',
             headers: {
@@ -54,7 +57,9 @@ export const resetPassword = () => {
         });
 
         if (request.ok) {
-            login(request);
+            const response = await request.json();
+            showLoggedInState(response.user);
+            window.accessToken = response.token;
             navigateTo('');
         }
     };
@@ -70,12 +75,12 @@ export const resetPassword = () => {
                 label: 'password',
             }),
             inputGroup({
-                name: 'password-confirm',
+                name: 'passwordConfirm',
                 type: 'password',
                 id: 'reset-password-confirm',
                 label: 'password confirmation',
             }),
-            createElement('reset', { text: 'login', classList: ['btn'] }),
+            createElement('button', { text: 'reset', classList: ['btn'] }),
         ],
         events: {
             submit,
