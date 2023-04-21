@@ -5,8 +5,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "tsx watch src",
-        "start": "node dist",
-        "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+        "start": "tsx src",
         "postinstall": "npm run prisma:generate",
         "prettier": "prettier ./src --write",
         "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
@@ -45,7 +44,6 @@
         "@types/nodemailer": "^6.4.7",
         "@types/ua-parser-js": "^0.7.36",
         "prettier": "^2.8.7",
-        "tsc-alias": "^1.8.5",
         "typescript": "^5.0.4"
     }
 }
