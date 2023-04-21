@@ -15,7 +15,9 @@ export interface DatabaseAdapter {
     createUser(
         params: Partial<Pick<User, 'id' | 'email' | 'name' | 'verified'>>
     ): Promise<User>;
-    findAuthMethod(params: Pick<AuthMethod, 'type' | 'value'>): Promise<
+    findAuthMethod(
+        params: Partial<Pick<AuthMethod, 'type' | 'value' | 'userId'>>
+    ): Promise<
         | (AuthMethod & {
               user: User;
           })

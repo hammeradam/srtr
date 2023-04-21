@@ -52,7 +52,11 @@ export const prismaAdapter = (): DatabaseAdapter => {
         });
     };
 
-    const findAuthMethod = (where: { type: string; value: string }) => {
+    const findAuthMethod = (where: {
+        type?: string;
+        value?: string;
+        userId?: string;
+    }) => {
         return prisma.authMethod.findFirst({
             where,
             include: {

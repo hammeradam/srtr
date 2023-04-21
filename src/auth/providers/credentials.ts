@@ -208,15 +208,29 @@ export const credentialsProvider =
                 return res.status(400).end();
             }
 
-            await adapter.updateAuthMethod(
-                {
+            const authMethod = await adapter.findAuthMethod({
+                userId: user.id,
+                type: 'credentials',
+            });
+
+            if (authMethod) {
+                await adapter.updateAuthMethod(
+                    {
+                        type: 'credentials',
+                        userId: user.id,
+                    },
+                    {
+                        secret: await hash(password, 10),
+                    }
+                );
+            } else {
+                await adapter.createAuthMethod({
                     type: 'credentials',
                     userId: user.id,
-                },
-                {
+                    value: user.email!,
                     secret: await hash(password, 10),
-                }
-            );
+                });
+            }
 
             await adapter.deleteToken({
                 userId: user.id,
