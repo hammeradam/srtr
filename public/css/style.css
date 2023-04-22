@@ -85,7 +85,7 @@ body {
 }
 
 main {
-    width: min-content;
+    min-width: min(100vw - 2rem, 450px);
     max-width: 100%;
     padding-inline: 0.5rem;
 }
@@ -423,6 +423,11 @@ hr {
 
 .error-page p {
     font-size: 30px;
+}
+
+.table-wrapper {
+    max-width: 100%;
+    overflow: auto;
 }
 
 table {

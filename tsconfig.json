@@ -8,7 +8,10 @@
         "strict": true,
         "noImplicitAny": true,
         "skipLibCheck": true,
-        "baseUrl": "./src"
+        "baseUrl": "./src",
+        "paths": {
+            "@*": ["./*"]
+        }
     },
     "include": ["./src/**/*"]
 }

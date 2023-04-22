@@ -111,17 +111,23 @@ export const table = async ({
 
     return createElement('div', {
         classList: [id],
+        style: 'max-width: 100%',
         children: [
-            createElement('table', {
+            createElement('div', {
+                classList: ['table-wrapper'],
                 children: [
-                    createElement('tr', {
-                        children: columns.map((column) =>
-                            createElement('th', {
-                                text: column.header,
-                            })
-                        ),
+                    createElement('table', {
+                        children: [
+                            createElement('tr', {
+                                children: columns.map((column) =>
+                                    createElement('th', {
+                                        text: column.header,
+                                    })
+                                ),
+                            }),
+                            ...renderRows(data, columns),
+                        ],
                     }),
-                    ...renderRows(data, columns),
                 ],
             }),
             hasPagination &&
