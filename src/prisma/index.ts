@@ -1,12 +1,25 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
-declare global {
-    var prisma: PrismaClient | undefined;
-}
+const prisma: PrismaClient<
+    Prisma.PrismaClientOptions,
+    'info' | 'warn' | 'error' | 'query'
+> = new PrismaClient({
+    log: [
+        {
+            emit: 'stdout',
+            level: 'query',
+        },
+        {
+            emit: 'stdout',
+            level: 'info',
+        },
+    ],
+});
 
-export default global.prisma ||
-    new PrismaClient({
-        log: ['query'],
-    });
+prisma.$on('query', (e) => {
+    console.log('Query: ' + e.query);
+    console.log('Duration: ' + e.duration + 'ms');
+});
 
+export default prisma;
 export * from '@prisma/client';

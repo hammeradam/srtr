@@ -4,7 +4,6 @@ import {
     validateLink,
     generateName,
     getLoggedInUser,
-    sendHtml,
     getPaginationParams,
 } from 'utils';
 import prisma from 'prisma';
