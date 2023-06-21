@@ -25,7 +25,7 @@ export const checkLogin = async () => {
         method: 'POST',
     });
 
-    if (!request.status === 204) {
+    if (request.status === 204) {
         window.accessToken = null;
 
         return;
