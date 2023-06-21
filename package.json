@@ -6,11 +6,12 @@
     "scripts": {
         "dev": "tsx watch src",
         "start": "tsx src",
-        "postinstall": "npm run prisma:generate",
+        "postinstall": "pnpm run prisma:generate && pnpm run prisma:migrate",
         "prettier": "prettier ./src --write",
         "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
         "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma",
         "prisma:push": "prisma db push --schema=./src/prisma/schema.prisma",
+        "prisma:migrate": "prisma migrate deploy",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "engines": {
