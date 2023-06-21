@@ -74,7 +74,7 @@ export const authBuilder = ({ providers, adapter }: AuthBuilderProps) => {
             const token = req.cookies[COOKIE_NAME];
 
             if (!token) {
-                return res.status(401).send('missing_refresh_token');
+                return res.status(204).send('missing_refresh_token');
             }
 
             const payload = jwt.verify(

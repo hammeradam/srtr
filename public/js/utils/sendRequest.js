@@ -15,7 +15,7 @@ export const sendRequest = async (path, options) => {
             method: 'POST',
         });
 
-        if (tokenRequest.ok) {
+        if (tokenRequest.status === 200) {
             const tokenResponse = await tokenRequest.json();
             window.accessToken = tokenResponse.token;
 
