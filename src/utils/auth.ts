@@ -29,6 +29,7 @@ export const sendRefreshToken = (res: Response, token: string) => {
         httpOnly: true,
         path: '/api/auth/refresh_token',
         secure: false,
+        sameSite: 'lax',
     });
 };
 
@@ -37,5 +38,6 @@ export const clearRefreshToken = (res: Response) => {
         httpOnly: true,
         path: '/api/auth/refresh_token',
         secure: false,
+        sameSite: 'lax',
     });
 };
