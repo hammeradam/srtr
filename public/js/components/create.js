@@ -87,7 +87,7 @@ export const create = () => {
     return createElement('form', {
         classList: ['card'],
         children: [
-            createElement('h1', { text: 'srtr' }),
+            createElement('h1', { text: 'srtr test' }),
             inputGroup({
                 name: 'url',
                 type: 'url',
